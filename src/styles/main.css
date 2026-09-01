@@ -1,0 +1,16 @@
+/* ============================================================
+   PHD AUTOMÓVEIS
+   Ordem de cascata:
+   tokens → base → effects → animations → components → seções → páginas
+   ============================================================ */
+
+@import './base.css';
+@import './effects.css';
+@import './animations.css';
+@import './components.css';
+@import './layout.css';
+@import './home.css';
+@import './catalog.css';
+@import './vehicle.css';
+@import './drivemode.css';
+@import './pages.css';

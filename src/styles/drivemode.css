@@ -1,0 +1,351 @@
+/* ============================================================
+   MODO IMERSIVO — a interface praticamente desaparece
+   ============================================================ */
+
+.mi {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  background: var(--ink-900);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overscroll-behavior: contain;
+  touch-action: none;
+  cursor: grab;
+  isolation: isolate;
+}
+
+.mi:active {
+  cursor: grabbing;
+}
+
+.mi__palco {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.mi__foto {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+/* ------------------------------------------------ Barra */
+
+.mi__barra {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--gutter);
+}
+
+.mi__marca {
+  color: var(--paper-dim);
+}
+
+.mi__marca em {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+.mi__barra-direita {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mi__som,
+.mi__sair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  font-size: var(--fs-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  background: rgba(8, 9, 10, 0.4);
+  backdrop-filter: blur(8px);
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.mi__som:hover,
+.mi__sair:hover {
+  border-color: var(--paper);
+  color: var(--fg);
+}
+
+.mi__som.is-ligado {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.mi__som-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
+}
+
+.mi__som-barras i {
+  width: 2px;
+  height: 3px;
+  background: currentColor;
+  transition: height var(--dur-fast) var(--ease-out);
+}
+
+.mi__som.is-ligado .mi__som-barras i {
+  animation: mi-eq 0.9s ease-in-out infinite alternate;
+}
+
+.mi__som.is-ligado .mi__som-barras i:nth-child(2) { animation-delay: 0.15s; }
+.mi__som.is-ligado .mi__som-barras i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes mi-eq {
+  from { height: 3px; }
+  to { height: 11px; }
+}
+
+.mi__sair span {
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-size: 0.5625rem;
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------- Informação */
+
+.mi__info {
+  position: relative;
+  z-index: 2;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0 var(--gutter);
+  max-width: min(620px, 90vw);
+}
+
+.mi__nome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.mi__nome-mascara {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.mi__nome-interno {
+  display: block;
+}
+
+.mi__nome-interno.meta {
+  color: var(--accent-text);
+}
+
+.mi__itens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  color: var(--paper-dim);
+}
+
+.mi__item:not(:last-child)::after {
+  content: '/';
+  margin-left: var(--space-3);
+  color: var(--steel-300);
+}
+
+.mi__preco {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 500;
+}
+
+.mi__ver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  margin-top: var(--space-1);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--accent);
+  font-size: var(--fs-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  transition: gap var(--dur-fast) var(--ease-out);
+}
+
+.mi__ver:hover {
+  gap: var(--space-4);
+}
+
+.mi__etiqueta {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  transform: rotate(90deg);
+  transform-origin: right center;
+  color: var(--paper-dim);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ------------------------------------------------- Rodapé */
+
+.mi__rodape {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--gutter) var(--space-6);
+}
+
+.mi__contador {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.mi__contador em {
+  font-style: normal;
+  font-size: 0.7rem;
+  color: var(--paper-dim);
+  opacity: 0.7;
+  margin-left: var(--space-1);
+}
+
+.mi__trilho {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mi__trilho li {
+  flex: 1;
+}
+
+.mi__marca-trilho {
+  display: block;
+  width: 100%;
+  height: 22px;
+  position: relative;
+}
+
+.mi__marca-trilho::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(244, 243, 240, 0.35);
+  transition: background var(--dur-fast) var(--ease-out), height var(--dur-fast) var(--ease-out);
+}
+
+.mi__marca-trilho:hover::after {
+  background: var(--paper);
+}
+
+.mi__marca-trilho.is-ativa::after {
+  background: var(--accent);
+  height: 3px;
+}
+
+.mi__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.mi__nav button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--paper-dim);
+  background: rgba(8, 9, 10, 0.4);
+  backdrop-filter: blur(8px);
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.mi__nav button:hover {
+  border-color: var(--paper);
+  color: var(--fg);
+}
+
+.mi__dica {
+  display: none;
+  color: var(--paper-dim);
+  opacity: 0.7;
+}
+
+@media (min-width: 900px) {
+  .mi__dica { display: block; }
+}
+
+@media (max-width: 700px) {
+  .mi__etiqueta { display: none; }
+  .mi__contador { font-size: 1rem; }
+  .mi__rodape { gap: var(--space-3); }
+}
+
+/* ------------------------------------- Camadas cinematográficas */
+
+/* Cortina preta: escurece no corte e reabre. Dá o "clique" de
+   troca de plano sem mexer na fotografia em si. */
+.mi__cortina {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--ink-900);
+  opacity: 0;
+}
+
+/* Tinta ambiente: uma cor que deriva devagar por cima da cena.
+   Fica sobre o véu, nunca como filtro da imagem — hue-rotate em
+   tela cheia repinta cada quadro. */
+.mi__tinta {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+/* Dígitos do índice, revelados um a um */
+.mi__contador {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.mi__digito {
+  display: inline-block;
+  min-width: 0.62em;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mi__cortina,
+  .mi__tinta { display: none; }
+}

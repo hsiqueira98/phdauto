@@ -1,0 +1,447 @@
+/* ============================================================
+   PÁGINA DO VEÍCULO
+   Emoção → informação → conversão
+   ============================================================ */
+
+.vhero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.vhero__foto {
+  position: absolute;
+  inset: -6% 0 0;
+  z-index: 0;
+  width: 100%;
+  height: 106%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  will-change: transform;
+}
+
+.vhero__conteudo {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 9rem var(--gutter) var(--space-7);
+}
+
+.vhero__conteudo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(8, 9, 10, 0.88) 0%, rgba(8, 9, 10, 0.66) 34%, rgba(8, 9, 10, 0.2) 64%, transparent 84%),
+    linear-gradient(0deg, rgba(8, 9, 10, 0.88) 0%, transparent 60%);
+}
+
+/* Selo de transparência: a foto é do modelo, não da unidade em estoque. */
+.vhero__referencia {
+  position: absolute;
+  right: var(--gutter);
+  bottom: var(--space-7);
+  z-index: 3;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  background: rgba(8, 9, 10, 0.55);
+  backdrop-filter: blur(8px);
+  color: var(--paper-dim);
+}
+
+.vhero__trilha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  /* sobre fotografia, o cinza fraco some: usa o tom de papel esmaecido */
+  color: var(--paper-dim);
+  opacity: 0.85;
+  margin-bottom: var(--space-5);
+}
+
+.vhero__titulo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.vhero__mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.vhero__mask-inner {
+  display: block;
+}
+
+.vhero__marca {
+  color: var(--accent-text);
+}
+
+.vhero__dados {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+
+.vhero__frase {
+  color: var(--paper-dim);
+  max-width: 44ch;
+}
+
+.vhero__linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-5);
+}
+
+.vhero__preco {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 500;
+  color: var(--accent-text);
+}
+
+.vhero__situacao {
+  color: var(--fg-muted);
+}
+
+/* --------------------------------------- Sequência pinada */
+
+.specseq {
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  background: var(--ink-900);
+  border-block: 1px solid var(--line);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.specseq__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  z-index: 0;
+}
+
+.specseq__etapas {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  pointer-events: none;
+  padding: var(--gutter);
+}
+
+.specseq__step {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  color: var(--paper);
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.75);
+  visibility: hidden;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.specseq__valor {
+  display: block;
+}
+
+.specseq__numero {
+  color: var(--accent-text);
+}
+
+/* Divisor que entra por máscara sob cada informação */
+.specseq__divisor {
+  display: block;
+  width: min(280px, 40vw);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+  clip-path: inset(0 100% 0 0);
+}
+
+.specseq__progresso {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: var(--space-6);
+  height: 1px;
+  background: var(--line-strong);
+  z-index: 3;
+}
+
+.specseq__progresso-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.specseq__rotulo {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--space-8);
+  z-index: 3;
+  color: var(--paper-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .specseq { height: auto; min-height: 0; padding: var(--section-y) var(--gutter); }
+  .specseq__foto { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; border-radius: var(--radius-lg); }
+  .specseq__etapas { position: relative; inset: auto; display: flex; flex-wrap: wrap; gap: var(--space-6); justify-content: center; margin-top: var(--space-6); }
+  .specseq__step { grid-area: auto; visibility: visible; opacity: 1; }
+  .specseq__valor { font-size: var(--fs-h2); }
+  .specseq__progresso, .specseq__rotulo { position: relative; left: auto; right: auto; bottom: auto; margin-top: var(--space-5); }
+}
+
+/* --------------------------------------------- Ficha técnica */
+
+.vficha__shell {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.vficha__lead {
+  color: var(--fg);
+  max-width: 50ch;
+}
+
+.vficha__subtitulo {
+  color: var(--accent-text);
+  margin: clamp(2rem, 4vw, 2.5rem) 0 var(--space-4);
+}
+
+.vficha__itens {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.vficha__itens li {
+  position: relative;
+  padding-left: var(--space-5);
+  color: var(--fg-muted);
+  font-size: var(--fs-sm);
+}
+
+.vficha__itens li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 8px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.vficha__tabela .vficha__subtitulo {
+  margin-top: 0;
+}
+
+.ficha {
+  border-top: 1px solid var(--line);
+}
+
+.ficha__linha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.ficha__linha dd {
+  font-size: var(--fs-sm);
+}
+
+@media (min-width: 1000px) {
+  .vficha__shell {
+    grid-template-columns: 1.25fr 1fr;
+  }
+}
+
+/* ------------------------------------------------- Galeria */
+
+.vgaleria__palco {
+  position: relative;
+}
+
+.vgaleria__quadro .foto {
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4);
+}
+
+.vgaleria__legenda {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 2;
+  color: var(--paper);
+  opacity: 0.8;
+}
+
+.vgaleria__miniaturas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  max-width: 480px;
+}
+
+.vgaleria__miniatura {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  overflow: hidden;
+  opacity: 0.5;
+  transition: opacity var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+
+.vgaleria__miniatura:hover {
+  opacity: 0.85;
+}
+
+.vgaleria__miniatura.is-ativa {
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+.vgaleria__miniatura .foto {
+  border-radius: 0;
+}
+
+.vgaleria__nota {
+  margin-top: var(--space-6);
+  color: var(--fg-faint);
+  font-size: var(--fs-sm);
+  max-width: 62ch;
+}
+
+/* ----------------------------------------------- Conversão */
+
+.vconversao {
+  background: var(--ink-800);
+  border-block: 1px solid var(--line);
+}
+
+.vconversao__shell {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.vconversao__titulo {
+  max-width: 16ch;
+  margin-bottom: var(--space-6);
+}
+
+.vconversao__pontos {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.vconversao__pontos li {
+  position: relative;
+  padding-left: var(--space-5);
+  color: var(--fg-muted);
+  font-size: var(--fs-sm);
+}
+
+.vconversao__pontos li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.vconversao__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Simulação */
+.simulacao {
+  display: grid;
+  gap: var(--space-5);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--ink-700);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.simulacao__topo {
+  color: var(--accent-text);
+}
+
+.simulacao__resultado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.simulacao__valor {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.simulacao__controles {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.simulacao__controle {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.simulacao__nota {
+  color: var(--fg-faint);
+}
+
+@media (min-width: 1000px) {
+  .vconversao__shell {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+/* ----------------------------------------------- Relacionados */
+
+.vrelacionados__grade {
+  display: grid;
+  gap: clamp(1.5rem, 2.5vw, 2.25rem);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}

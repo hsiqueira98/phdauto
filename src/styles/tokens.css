@@ -1,0 +1,154 @@
+/* ============================================================
+   PHD AUTOMÓVEIS — Tokens de design
+   Linguagem cinematográfica: preto, branco e vermelho.
+
+   Princípio tipográfico: premium é escala contida e ar entre as
+   letras. Caixa-alta condensada e entrelinha < 1 empilham as
+   palavras — aqui os títulos são em caixa normal, com entrelinha
+   folgada.
+   ============================================================ */
+
+:root {
+  /* --- Superfícies (preto profundo) --- */
+  --ink-900: #08090a;
+  --ink-850: #0b0c0e;
+  --ink-800: #111317;
+  --ink-700: #171a1f;
+  --ink-600: #1e2229;
+  --ink-500: #282d35;
+
+  --dark-black: #0a0a0a;
+  --dark-navy: #0f172a;
+  --dark-slate: #1a202c;
+
+  /* --- Papel / off-white --- */
+  --paper: #f4f3f0;
+  --paper-dim: #d8d7d2;
+
+  /* --- Cinza metálico --- */
+  --steel-100: #b8bcc3;
+  --steel-200: #8b9099;
+  --steel-300: #888d95;
+  --steel-400: #3d424a;
+
+  /* --- Vermelho cinematográfico --- */
+  --accent-red: #dc2626;
+  --accent-red-bright: #ef4444;
+  --accent-red-deep: #b91c1c;
+  --accent-red-dim: rgba(220, 38, 38, 0.12);
+  --accent-red-glow: rgba(220, 38, 38, 0.3);
+
+  /* --- Accent semântico ---
+     `--accent` é a cor GRÁFICA: bordas, brilhos, preenchimentos,
+     display grande. Sobre grafite ela dá 4,05:1 — passa para
+     elemento gráfico e texto grande, reprova para texto normal.
+
+     `--accent-text` é a mesma família num tom que alcança 5,2:1.
+     Todo rótulo pequeno (.meta, chips, links) usa ESTE token.
+     Sem essa separação a paleta pedida quebraria o critério de
+     contraste da própria checklist do projeto. */
+  --accent: var(--accent-red);
+  --accent-text: var(--accent-red-bright);
+  --accent-bright: var(--accent-red-bright);
+  --accent-dim: var(--accent-red-dim);
+  --accent-glow: var(--accent-red-glow);
+  /* Fundo sólido do vermelho. #dc2626 preenchido não alcança 4,5:1
+     com nenhuma cor de texto — nem escura (4,13) nem clara (4,35).
+     O tom fechado com texto em papel dá 5,83:1. */
+  --accent-solid: var(--accent-red-deep);
+
+  /* --- Semânticos --- */
+  --bg: var(--ink-850);
+  --bg-elevated: var(--ink-800);
+  --fg: var(--paper);
+  --fg-muted: var(--steel-200);
+  /* Passa 4,5:1 em todas as superfícies do site, da mais escura
+     (ink-850) à mais clara (ink-600). */
+  --fg-faint: var(--steel-300);
+  --line: rgba(244, 243, 240, 0.09);
+  --line-strong: rgba(244, 243, 240, 0.2);
+
+  /* --- Gradientes cinematográficos --- */
+  --gradient-dark-fade: linear-gradient(
+    90deg,
+    rgba(10, 10, 10, 0.95) 0%,
+    rgba(10, 10, 10, 0.5) 50%,
+    transparent 100%
+  );
+  --gradient-accent-glow: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
+  --gradient-metallic: linear-gradient(90deg, #8b9099 0%, #3d424a 100%);
+
+  /* --- Sombras --- */
+  --shadow-glow: 0 0 20px rgba(220, 38, 38, 0.3), 0 0 40px rgba(220, 38, 38, 0.1);
+  --shadow-deep: 0 20px 40px rgba(0, 0, 0, 0.6);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  /* --- Famílias --- */
+  --font-display: 'Archivo', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* --- Escala tipográfica ---
+     Teto modesto de propósito: o maior título tem 4,5rem.
+     A hierarquia vem do espaço em volta, não do corpo. */
+  --fs-display: clamp(2.5rem, 5.4vw, 4.5rem);
+  --fs-h1: clamp(2rem, 4.2vw, 3.4rem);
+  --fs-h2: clamp(1.6rem, 3vw, 2.5rem);
+  --fs-h3: clamp(1.25rem, 1.9vw, 1.6rem);
+  --fs-h4: clamp(1.05rem, 1.4vw, 1.25rem);
+  --fs-lead: clamp(1.0625rem, 1.35vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-sm: 0.9375rem;
+  --fs-xs: 0.8125rem;
+  --fs-meta: 0.6875rem;
+
+  /* --- Entrelinha --- */
+  --lh-display: 1.1;
+  --lh-title: 1.2;
+  --lh-lead: 1.55;
+  --lh-body: 1.7;
+
+  /* --- Espaçamento entre letras --- */
+  --track-display: -0.02em;
+  --track-title: -0.012em;
+  --track-body: 0;
+  --track-meta: 0.14em;
+  --track-wide: 0.22em;
+
+  /* --- Ritmo espacial --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --section-y: clamp(4.5rem, 9vw, 8rem);
+  --shell-max: 1440px;
+
+  --radius: 3px;
+  --radius-lg: 6px;
+
+  /* --- Movimento --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-quint-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --dur-very-fast: 0.15s;
+  --dur-fast: 0.3s;
+  --dur-medium: 0.6s;
+  --dur: 0.5s;
+  --dur-slow: 0.9s;
+  --dur-very-slow: 1.2s;
+
+  --z-content: 10;
+  --z-header: 60;
+  --z-overlay: 80;
+  --z-cursor: 100;
+  --z-progress: 90;
+}

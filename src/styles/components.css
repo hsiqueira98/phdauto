@@ -1,0 +1,422 @@
+/* ============================================================
+   COMPONENTES TRANSVERSAIS
+   ============================================================ */
+
+/* ---------------------------------------------------- Botões */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.9rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.btn--lg {
+  padding: 1.05rem 2rem;
+  font-size: var(--fs-sm);
+}
+
+.btn--full {
+  width: 100%;
+}
+
+.btn--paper {
+  background: var(--paper);
+  color: var(--ink-900);
+}
+.btn--paper:hover {
+  background: var(--accent-bright);
+}
+
+.btn--accent {
+  background: var(--accent-solid);
+  color: var(--paper);
+}
+.btn--accent:hover {
+  background: var(--accent-red);
+}
+
+.btn--ghost {
+  border-color: var(--line-strong);
+  color: var(--fg);
+}
+.btn--ghost:hover {
+  border-color: var(--paper);
+  background: rgba(244, 243, 240, 0.05);
+}
+
+/* ============================================================
+   FOTOGRAFIA — o tratamento que unifica o acervo
+   ============================================================ */
+
+.foto {
+  position: relative;
+  margin: 0;
+  aspect-ratio: var(--foto-proporcao, 16 / 10);
+  overflow: hidden;
+  background: var(--ink-700);
+  border-radius: var(--radius-lg);
+  isolation: isolate;
+}
+
+.foto__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(var(--foto-escala, 1));
+  /* Graduação PHD: tira o excesso de cor de origens diferentes
+     e aproxima todas do mesmo grafite. */
+  filter: saturate(0.82) contrast(1.06) brightness(0.94);
+  opacity: 0;
+  transition:
+    opacity 0.8s var(--ease-out),
+    transform 1s var(--ease-out),
+    filter var(--dur) var(--ease-out);
+}
+
+.foto.is-carregada .foto__img {
+  opacity: 1;
+}
+
+/* Enquanto a foto não chega, o quadro já existe — nada "pula". */
+.foto:not(.is-carregada)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--ink-700) 30%, var(--ink-600) 50%, var(--ink-700) 70%);
+  background-size: 220% 100%;
+  animation: foto-carregando 1.5s ease-in-out infinite;
+}
+
+@keyframes foto-carregando {
+  to { background-position: -120% 0; }
+}
+
+.foto__grade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.foto--veu-leve .foto__grade {
+  background: linear-gradient(180deg, rgba(8, 9, 10, 0.12) 0%, transparent 40%, rgba(8, 9, 10, 0.28) 100%);
+}
+
+.foto--veu-medio .foto__grade {
+  background:
+    linear-gradient(180deg, rgba(8, 9, 10, 0.2) 0%, transparent 34%, rgba(8, 9, 10, 0.55) 100%),
+    radial-gradient(125% 95% at 50% 45%, transparent 42%, rgba(8, 9, 10, 0.4) 100%);
+}
+
+.foto--veu-forte .foto__grade {
+  background:
+    /* topo: garante o cabeçalho legível sobre carro claro */
+    linear-gradient(180deg, rgba(8, 9, 10, 0.78) 0%, rgba(8, 9, 10, 0.22) 22%, transparent 42%),
+    /* base: cama escura para o bloco de texto */
+    linear-gradient(0deg, rgba(8, 9, 10, 0.94) 0%, rgba(8, 9, 10, 0.78) 22%, rgba(8, 9, 10, 0.3) 52%, transparent 78%),
+    radial-gradient(120% 90% at 50% 45%, transparent 25%, rgba(8, 9, 10, 0.55) 100%);
+}
+
+/* Véu de capa: o texto mora à esquerda, a máquina fica à direita.
+   Escurecer só a faixa do texto é o que impede a tipografia de
+   cair por cima da lataria. */
+.foto--veu-capa .foto__grade {
+  background:
+    linear-gradient(90deg,
+      rgba(8, 9, 10, 0.96) 0%,
+      rgba(8, 9, 10, 0.9) 26%,
+      rgba(8, 9, 10, 0.55) 46%,
+      rgba(8, 9, 10, 0.12) 64%,
+      transparent 80%),
+    linear-gradient(180deg, rgba(8, 9, 10, 0.7) 0%, transparent 18%),
+    linear-gradient(0deg, rgba(8, 9, 10, 0.85) 0%, transparent 26%);
+}
+
+.foto__vazio {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--fg-faint);
+}
+
+/* --------------------------------------------------- Split */
+
+.split {
+  display: block;
+}
+
+.split__line {
+  display: block;
+  overflow: hidden;
+  /* Descendentes (g, j, p) precisam de folga dentro da máscara. */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.split__inner {
+  display: block;
+  will-change: transform;
+}
+
+.split-words__word {
+  display: inline;
+}
+
+/* ------------------------------------------------- Marquee */
+
+.marquee {
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee__track {
+  display: inline-flex;
+  animation: marquee-scroll linear infinite;
+  will-change: transform;
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding-right: var(--space-5);
+}
+
+.marquee__sep {
+  font-style: normal;
+  color: var(--accent-text);
+}
+
+@keyframes marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+}
+
+/* ------------------------------------------------ Rolagem */
+
+.scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.scroll-cue__line {
+  display: block;
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(180deg, var(--accent), transparent);
+  transform-origin: top;
+}
+
+/* --------------------------------------------------- Cursor */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-cursor);
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.cursor__ring {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border: 1px solid rgba(244, 243, 240, 0.5);
+  border-radius: 50%;
+  grid-area: 1 / 1;
+}
+
+.cursor__label {
+  grid-area: 1 / 1;
+  margin: -0.5rem 0 0 -3rem;
+  width: 6rem;
+  text-align: center;
+  /* Fica sobre o disco vermelho: texto claro é o que se lê ali. */
+  color: var(--paper);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+}
+
+/* ------------------------------------------------ Preloader */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--ink-900);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.preloader__inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: var(--gutter);
+  gap: var(--space-6);
+}
+
+.preloader__mark {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.preloader__sigla {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.06em;
+}
+
+.preloader__count {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4.5vw, 3rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.preloader__bar {
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+}
+
+/* ------------------------------------------- Campos de form */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field label {
+  font-size: var(--fs-meta);
+  letter-spacing: var(--track-meta);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  background: rgba(244, 243, 240, 0.035);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--fg);
+  font-size: var(--fs-sm);
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.field input:hover,
+.field select:hover {
+  border-color: var(--line-strong);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(244, 243, 240, 0.06);
+}
+
+.field select option {
+  background: var(--ink-800);
+  color: var(--fg);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* --------------------------------- Range nativo (simulações) */
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: var(--steel-400);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 3px solid var(--ink-850);
+  box-shadow: 0 0 0 1px var(--paper);
+  cursor: grab;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  background: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 3px solid var(--ink-850);
+  box-shadow: 0 0 0 1px var(--paper);
+  cursor: grab;
+}
+
+/* ------------------------------------------- Card flutuante */
+
+.flutuante {
+  perspective: 1100px;
+}
+
+.flutuante__card {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.flutuante__reflexo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+}

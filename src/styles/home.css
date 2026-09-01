@@ -1,0 +1,1340 @@
+/* ============================================================
+   HOME — seções
+   ============================================================ */
+
+/* ------------------------------------------- ABERTURA (hero) */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__midia {
+  position: absolute;
+  inset: -6% 0 0;
+  z-index: 0;
+  will-change: transform;
+}
+
+.hero__midia .foto,
+.hero__foto {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  aspect-ratio: auto;
+}
+
+/* Brilho vermelho que deriva atrás do texto. Puramente decorativo
+   e composto na GPU (só transform) — não custa repaint. */
+.hero__brilho {
+  position: absolute;
+  left: -10%;
+  bottom: -20%;
+  width: min(70vw, 900px);
+  height: min(70vw, 900px);
+  z-index: 1;
+  pointer-events: none;
+  background: var(--gradient-accent-glow);
+  opacity: 0.85;
+  will-change: transform;
+}
+
+.hero__conteudo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  padding: 7rem var(--gutter) var(--space-7);
+  will-change: transform;
+}
+
+/* Coluna de texto estreita: a máquina precisa respirar à direita. */
+.hero__coluna {
+  width: 100%;
+  max-width: 30rem;
+}
+
+.hero__selo {
+  color: var(--accent-text);
+  margin-bottom: var(--space-5);
+}
+
+.hero__titulo {
+  max-width: 13ch;
+  margin-bottom: var(--space-5);
+}
+
+.hero__titulo .split-letters__letter {
+  display: inline-block;
+  white-space: pre;
+  will-change: transform;
+}
+
+/* A máscara da imagem começa fechada; o GSAP a abre na entrada.
+   Sem movimento, ela já nasce aberta. */
+.hero__midia {
+  clip-path: inset(0 100% 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__midia { clip-path: inset(0 0 0 0); }
+  .hero__brilho { display: none; }
+}
+
+.hero__lead {
+  max-width: 34ch;
+  color: var(--paper-dim);
+  margin-bottom: var(--space-6);
+}
+
+.hero__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.hero__rodape {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: 0 var(--gutter) var(--space-6);
+  border-top: 1px solid var(--line);
+  margin: 0 var(--gutter);
+  padding-top: var(--space-5);
+}
+
+.hero__resumo {
+  color: var(--paper-dim);
+}
+
+@media (max-width: 900px) {
+  /* Sem largura para dividir a tela: o véu volta a cobrir tudo e o
+     texto vai para baixo, sobre a área escura. */
+  .hero__coluna { max-width: none; }
+  .hero__conteudo { align-items: flex-end; padding-top: 7rem; }
+  .foto--veu-capa .foto__grade {
+    background:
+      linear-gradient(180deg, rgba(8, 9, 10, 0.75) 0%, rgba(8, 9, 10, 0.2) 30%, transparent 45%),
+      linear-gradient(0deg, rgba(8, 9, 10, 0.95) 0%, rgba(8, 9, 10, 0.75) 30%, transparent 62%);
+  }
+  .hero__rodape {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+}
+
+/* ------------------------------------------------- MANIFESTO */
+
+/* Sem pin: a seção respira como qualquer outra e a rolagem
+   nunca é sequestrada. */
+.manifesto {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.manifesto__brilho {
+  position: absolute;
+  right: -15%;
+  top: 8%;
+  width: min(80vw, 1000px);
+  height: min(80vw, 1000px);
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gradient-accent-glow);
+  will-change: transform, opacity;
+}
+
+/* Fundo vivo: linhas diagonais finas deslizando devagar.
+   O preto chapado deixava a seção morta. Só transform anima —
+   a textura em si é um gradiente repetido, sem custo por quadro. */
+.manifesto::before {
+  content: '';
+  position: absolute;
+  inset: -20% -30%;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.5;
+  background: repeating-linear-gradient(
+    115deg,
+    transparent 0 38px,
+    rgba(244, 243, 240, 0.035) 38px 39px,
+    transparent 39px 78px,
+    rgba(220, 38, 38, 0.05) 78px 79px
+  );
+  -webkit-mask-image: radial-gradient(70% 60% at 60% 45%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(70% 60% at 60% 45%, #000 20%, transparent 78%);
+  animation: manifesto-deriva 26s linear infinite;
+}
+
+@keyframes manifesto-deriva {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-78px, -167px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manifesto::before { animation: none; }
+}
+
+.manifesto__grade {
+  display: grid;
+  gap: clamp(3rem, 6vw, 5rem);
+  align-items: center;
+}
+
+/* Coluna direita: instrumento + números */
+.manifesto__lado {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+
+.instrumento {
+  width: 100%;
+  max-width: 340px;
+  margin-inline: auto;
+}
+
+.instrumento svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.manifesto__numeros {
+  display: grid;
+  gap: var(--space-5);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--line);
+}
+
+.manifesto__frases {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+.manifesto__bloco {
+  position: relative;
+}
+
+.manifesto__frase {
+  /* Um pouco de ar extra entre as palavras: a frase é lida devagar,
+     palavra por palavra, conforme a rolagem. */
+  word-spacing: 0.06em;
+  /* Em ch NA PRÓPRIA frase: no contêiner, o ch era calculado sobre
+     1rem e espremia o texto em cinco linhas. */
+  max-width: 17ch;
+}
+
+.manifesto__frase .split-words__word {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+/* Risco vermelho que cresce sob a primeira frase */
+.manifesto__risco {
+  display: block;
+  width: min(220px, 45%);
+  height: 2px;
+  margin-top: var(--space-5);
+  background: linear-gradient(90deg, var(--accent-red), transparent);
+  transform-origin: left;
+}
+
+.manifesto__numero {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.manifesto__numero-valor {
+  flex-shrink: 0;
+  min-width: 3ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent-text);
+}
+
+@media (min-width: 1000px) {
+  .manifesto__grade {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+/* ------------------------------------------------- UNIVERSOS */
+
+.universos {
+  position: relative;
+}
+
+.universos__titulo {
+  max-width: 16ch;
+  margin-bottom: var(--space-4);
+}
+
+.universos__lead {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.universos__grade {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.universos__lista {
+  border-top: 1px solid var(--line);
+}
+
+.universos__linha {
+  display: grid;
+  grid-template-columns: 3rem 1fr auto;
+  align-items: center;
+  gap: var(--space-5);
+  padding: clamp(1.1rem, 2.2vw, 1.6rem) 0;
+  border-bottom: 1px solid var(--line);
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    padding-left var(--dur) var(--ease-out);
+}
+
+.universos__linha:hover,
+.universos__linha.is-ativa {
+  padding-left: var(--space-4);
+}
+
+/* Marca a linha ativa com um risco vermelho à esquerda, em vez de
+   apagar as outras — a lista inteira segue legível. */
+.universos__linha.is-ativa {
+  background: linear-gradient(90deg, var(--accent-red-dim), transparent 42%);
+  box-shadow: inset 2px 0 0 var(--accent-red);
+}
+
+.universos__indice {
+  color: var(--accent-text);
+}
+
+.universos__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.universos__nome {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.universos__linha:hover .universos__nome,
+.universos__linha.is-ativa .universos__nome {
+  color: var(--accent-text);
+}
+
+.universos__pergunta {
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.universos__conta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--fg-muted);
+}
+
+.universos__seta {
+  display: inline-block;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.universos__linha:hover .universos__seta {
+  transform: translateX(6px);
+  color: var(--accent-text);
+}
+
+/* Painel fixo à direita — nunca cobre a lista */
+.universos__painel-interno {
+  position: sticky;
+  top: 7rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.universos__painel-interno .foto {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.universos__painel-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.universos__painel-rotulo {
+  color: var(--accent-text);
+}
+
+.universos__painel-desc {
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--fg-muted);
+  max-width: 38ch;
+}
+
+.universos__painel-conta {
+  color: var(--fg-faint);
+}
+
+@media (min-width: 1000px) {
+  .universos__grade {
+    grid-template-columns: 1.25fr 0.75fr;
+  }
+  .universos__linha {
+    grid-template-columns: 3rem 12rem 1fr auto;
+  }
+  .universos__texto {
+    display: contents;
+  }
+  .universos__pergunta {
+    max-width: 40ch;
+  }
+}
+
+/* --------------------------------------------------- COLEÇÃO */
+
+.colecao {
+  position: relative;
+  padding: var(--section-y) 0;
+  background: var(--ink-900);
+  border-block: 1px solid var(--line);
+}
+
+.colecao__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: 0 var(--gutter);
+  margin-bottom: var(--space-6);
+}
+
+.colecao__topo .section-index {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.colecao__dica {
+  color: var(--accent-text);
+  white-space: nowrap;
+}
+
+.colecao__janela {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.colecao__janela::-webkit-scrollbar {
+  display: none;
+}
+
+.colecao__trilho {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 2rem);
+  padding-inline: var(--gutter);
+  width: max-content;
+  will-change: transform;
+  /* Ponto de fuga da faixa: sem isto o rotationY dos cartões
+     achata e vira só um "esticar" horizontal. */
+  perspective: 1600px;
+  perspective-origin: 50% 45%;
+}
+
+.colecao__painel {
+  flex: 0 0 auto;
+  width: min(80vw, 460px);
+  scroll-snap-align: center;
+  display: flex;
+}
+
+/* Largura do cartão vira variável: o recuo do trilho é calculado a
+   partir dela para que o cartão central pare no meio da tela. */
+.colecao {
+  --cartao-largura: min(80vw, 460px);
+}
+
+.colecao__cartao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 0;
+  will-change: transform, opacity, filter;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  border-radius: var(--radius-lg);
+}
+
+/* A foto cede espaço; a ficha nunca é cortada.
+   Era isso que escondia preço, ano e rodagem embaixo da dobra. */
+.colecao__foto {
+  flex: 1 1 auto;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.colecao__info {
+  flex: 0 0 auto;
+}
+
+.colecao__cartao:hover .foto__img {
+  filter: saturate(0.95) contrast(1.06) brightness(1);
+}
+
+.colecao__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex: 1;
+}
+
+.colecao__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.colecao__num {
+  color: var(--accent-text);
+}
+
+.colecao__marca {
+  color: var(--fg-faint);
+}
+
+.colecao__modelo {
+  margin-top: var(--space-1);
+}
+
+.colecao__dados {
+  display: flex;
+  gap: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.colecao__dados dd {
+  margin-top: 2px;
+  font-size: var(--fs-sm);
+}
+
+.colecao__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.colecao__preco {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 500;
+  color: var(--accent-text);
+}
+
+.colecao__cta {
+  color: var(--fg-muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.colecao__cartao:hover .colecao__cta {
+  color: var(--fg);
+}
+
+/* Painéis de texto: abertura e fechamento da faixa */
+.colecao__painel--texto {
+  width: min(74vw, 380px);
+  align-items: center;
+}
+
+.colecao__abertura {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.colecao__progresso {
+  height: 1px;
+  margin: var(--space-6) var(--gutter) 0;
+  background: var(--line);
+}
+
+.colecao__progresso-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .colecao {
+    --cartao-largura: min(42vw, 560px);
+  }
+  .colecao__janela {
+    overflow: hidden;
+    scroll-snap-type: none;
+  }
+
+  /* Recuo lateral = metade do espaço que sobra ao lado do cartão.
+     Com ele, o cartão em foco para exatamente no centro da tela em
+     vez de encostar na borda. */
+  .colecao__trilho {
+    padding-inline: calc((100vw - var(--cartao-largura)) / 2);
+  }
+
+  .colecao__painel {
+    width: var(--cartao-largura);
+    /* Altura travada na viewport: com a seção pinada, o que não
+       couber aqui simplesmente não aparece. */
+    height: min(70svh, 620px);
+  }
+  .colecao__painel--texto {
+    width: min(32vw, 420px);
+  }
+}
+
+/* --------------------------------------------- MODO IMERSIVO */
+
+.imersivo {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-block: 1px solid var(--line);
+  background:
+    radial-gradient(80% 60% at 15% 30%, rgba(220, 38, 38, 0.07), transparent 70%),
+    var(--ink-900);
+}
+
+.imersivo__grade {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+.imersivo__titulo {
+  max-width: 14ch;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.imersivo__mascara {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.imersivo__linha-interna {
+  display: block;
+}
+
+.imersivo__lead {
+  max-width: 44ch;
+  margin-bottom: var(--space-6);
+}
+
+.imersivo__itens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+
+.imersivo__itens li {
+  position: relative;
+  padding-left: var(--space-4);
+}
+
+.imersivo__itens li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-red);
+}
+
+.imersivo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+/* A fotografia agora é peça emoldurada, não pano de fundo.
+   Full-bleed atrás do texto era o que arruinava a leitura. */
+.imersivo__moldura {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-deep);
+}
+
+.imersivo__moldura .foto {
+  border-radius: 0;
+}
+
+.imersivo__moldura .foto__img {
+  will-change: transform;
+}
+
+.imersivo__legenda {
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 2;
+  color: var(--paper-dim);
+}
+
+.imersivo__marquee {
+  position: relative;
+  z-index: 1;
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 2.25rem);
+  font-weight: 500;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 243, 240, 0.24);
+}
+
+@media (min-width: 1000px) {
+  .imersivo__grade {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+  .imersivo__moldura {
+    max-width: 420px;
+    margin-left: auto;
+  }
+}
+
+/* ------------------------------------------- ENCONTRAR CARRO */
+
+.smart-find__title {
+  max-width: 16ch;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.smart-find__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.smart-find__rotulo {
+  color: var(--accent-text);
+}
+
+/* Caixa de verdade, com fundo e borda: o campo antes era só uma
+   linha e ninguém percebia que dava para digitar ali. */
+.smart-find__campo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-5);
+  background: rgba(244, 243, 240, 0.04);
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  transition:
+    border-color var(--dur) var(--ease-out),
+    background var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
+}
+
+.smart-find__campo:hover {
+  background: rgba(244, 243, 240, 0.06);
+  border-color: var(--paper-dim);
+}
+
+.smart-find__form:focus-within .smart-find__campo {
+  border-color: var(--accent);
+  background: rgba(244, 243, 240, 0.07);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Cursor piscando enquanto o campo está vazio */
+.smart-find__cursor {
+  width: 2px;
+  height: 1.4em;
+  flex-shrink: 0;
+  background: var(--accent-red);
+  animation: smart-find-piscar 1.1s steps(1) infinite;
+}
+
+@keyframes smart-find-piscar {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-find__cursor { animation: none; }
+}
+
+.smart-find__input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 2.4vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.008em;
+}
+
+.smart-find__input::placeholder {
+  color: var(--fg-faint);
+  opacity: 1;
+}
+
+.smart-find__input:focus {
+  outline: none;
+}
+
+.smart-find__submit {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink-900);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.smart-find__submit:hover {
+  background: var(--accent);
+  transform: translateX(3px);
+}
+
+.smart-find__feedback {
+  min-height: 3rem;
+  margin-top: var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.smart-find__tokens {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.smart-find__tokens-label {
+  color: var(--fg-faint);
+}
+
+.smart-find__token {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  font-size: var(--fs-xs);
+  color: var(--accent-text);
+  background: var(--accent-dim);
+}
+
+.smart-find__count {
+  color: var(--fg-muted);
+}
+
+.smart-find__suggestions {
+  margin-top: var(--space-6);
+}
+
+.smart-find__suggestions p {
+  margin-bottom: var(--space-3);
+}
+
+.smart-find__suggestions ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.smart-find__chip {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.smart-find__chip:hover {
+  border-color: var(--paper);
+  color: var(--fg);
+}
+
+.smart-find__note {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+  color: var(--fg-faint);
+  max-width: 64ch;
+  font-size: var(--fs-sm);
+}
+
+.smart-find__inline-link {
+  color: var(--accent-text);
+  border-bottom: 1px solid currentColor;
+  margin-inline: 0.3ch;
+}
+
+/* ---------------------------------------------------- VENDER */
+
+.sell {
+  background: var(--ink-800);
+  border-block: 1px solid var(--line);
+}
+
+.sell__shell {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.sell__title {
+  max-width: 14ch;
+  margin-bottom: var(--space-5);
+}
+
+.sell__lead {
+  color: var(--fg-muted);
+  max-width: 44ch;
+}
+
+.sell__steps {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.sell__step {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.sell__step-n {
+  color: var(--accent-text);
+}
+
+.sell__step-title {
+  font-size: var(--fs-body);
+  font-weight: 500;
+}
+
+.sell__step-body {
+  color: var(--fg-faint);
+  font-size: var(--fs-sm);
+  margin-top: var(--space-1);
+}
+
+.sell__form {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--ink-700);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-deep);
+}
+
+.sell__panel .flutuante__card {
+  border-radius: var(--radius-lg);
+}
+
+.sell__form-head {
+  color: var(--accent-text);
+}
+
+.sell__sent,
+.sell__disclaimer {
+  color: var(--fg-faint);
+  text-align: center;
+}
+
+@media (min-width: 1000px) {
+  .sell__shell {
+    grid-template-columns: 1.25fr 1fr;
+    align-items: start;
+  }
+  /* Fica visível enquanto a pessoa lê os passos à esquerda.
+     20vh aproxima o card do centro vertical da tela; o max() impede
+     que ele suba para debaixo do cabeçalho em telas baixas. */
+  .sell__panel {
+    position: sticky;
+    top: max(6.5rem, 20vh);
+  }
+}
+
+/* -------------------------------------------------- HISTÓRIA */
+
+.timeline {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  background: var(--ink-900);
+  overflow: hidden;
+  padding: var(--section-y) 0;
+}
+
+.timeline__inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding: 0 var(--gutter);
+}
+
+.timeline__rail {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.timeline__mark {
+  opacity: 0.3;
+  transition: opacity var(--dur) var(--ease-out);
+}
+
+.timeline__mark.is-active {
+  opacity: 1;
+  color: var(--accent-text);
+}
+
+.timeline__stage {
+  position: relative;
+  min-height: clamp(16rem, 34vh, 22rem);
+}
+
+.timeline__entry {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.timeline__texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.timeline__lado {
+  position: relative;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-5);
+}
+
+/* O ano repetido em contorno: preenche o vazio sem competir com a
+   leitura, porque não tem preenchimento. */
+.timeline__fantasma {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 14vw, 12rem);
+  font-weight: 600;
+  line-height: 0.85;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(220, 38, 38, 0.35);
+}
+
+.timeline__medida {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  width: min(240px, 100%);
+}
+
+.timeline__medida-valor {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent-text);
+}
+
+.timeline__barra {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.timeline__barra-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent-red);
+  transform-origin: left;
+}
+
+.timeline__entry.is-first {
+  visibility: visible;
+  opacity: 1;
+}
+
+.timeline__year {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--accent-text);
+}
+
+.timeline__title {
+  max-width: 20ch;
+}
+
+.timeline__body {
+  color: var(--fg-muted);
+  max-width: 52ch;
+}
+
+.timeline__turn {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.timeline__turn-texto {
+  color: var(--accent-text);
+}
+
+@media (min-width: 1000px) {
+  .timeline__entry { grid-template-columns: 1.1fr 0.9fr; }
+  .timeline__lado { display: flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline { min-height: 0; }
+  .timeline__stage { min-height: 0; display: grid; gap: var(--space-7); }
+  .timeline__entry { position: relative; inset: auto; visibility: visible; opacity: 1; }
+  .timeline__turn { position: relative; inset: auto; visibility: visible; opacity: 1; place-content: start; }
+}
+
+/* -------------------------------------------------- SHOWROOM */
+
+.showroom__shell {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.showroom__title {
+  max-width: 12ch;
+  margin-bottom: var(--space-5);
+}
+
+.showroom__lead {
+  color: var(--fg-muted);
+  max-width: 44ch;
+}
+
+.showroom__info {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.showroom__info dt {
+  color: var(--accent-text);
+  margin-bottom: var(--space-1);
+}
+
+.showroom__info dd {
+  color: var(--fg-muted);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+.showroom__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: clamp(2rem, 4vw, 2.5rem);
+}
+
+/* ---- Mapa real (OpenStreetMap) ---- */
+
+.showroom__mapa-moldura {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--ink-800);
+  box-shadow: var(--shadow-deep);
+}
+
+.showroom__mapa-moldura iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  opacity: 0;
+  /* O mapa do OSM é claro; sem isto ele briga com o site inteiro. */
+  filter: grayscale(0.85) invert(0.92) hue-rotate(180deg) contrast(0.9) brightness(0.95);
+  transition: opacity 0.7s var(--ease-out);
+}
+
+.showroom__mapa-moldura.is-carregado iframe {
+  opacity: 1;
+}
+
+/* Tinta por cima, sem bloquear o ponteiro: o mapa segue arrastável */
+.showroom__mapa-tinta {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 50% 50%, transparent 30%, rgba(8, 9, 10, 0.45) 100%),
+    linear-gradient(180deg, rgba(8, 9, 10, 0.25), transparent 30%, rgba(8, 9, 10, 0.35));
+}
+
+.showroom__mapa-pino {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.showroom__mapa-ponto {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-red);
+  box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.25), 0 0 24px rgba(220, 38, 38, 0.6);
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+
+.showroom__mapa-rotulo {
+  color: var(--paper);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+
+.showroom__mapa-credito {
+  margin-top: var(--space-3);
+  color: var(--fg-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showroom__mapa-ponto { animation: none; }
+}
+
+@media (min-width: 900px) {
+  .showroom__shell { grid-template-columns: 1fr 1fr; }
+  .showroom__info { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* --------------------------------------------- CHAMADA FINAL */
+
+.final {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding-block: clamp(5rem, 12vh, 9rem);
+}
+
+.final__halo {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 110vw;
+  height: 60vw;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, var(--accent-dim), transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.final__shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.final__mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.final__line-inner {
+  display: block;
+}
+
+.final__lead {
+  color: var(--fg-muted);
+  max-width: 46ch;
+}
+
+.final__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.final__foot {
+  margin-top: var(--space-5);
+  color: var(--fg-faint);
+}

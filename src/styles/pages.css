@@ -1,0 +1,184 @@
+/* ============================================================
+   PÁGINAS DE APOIO — Vender, Financiamento, A casa, 404
+   ============================================================ */
+
+.page {
+  padding-top: 6rem;
+  min-height: 100svh;
+}
+
+.page__hero {
+  padding: clamp(3rem, 6vw, 5rem) var(--gutter) clamp(2.5rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.page__title {
+  max-width: 16ch;
+  margin-bottom: var(--space-5);
+}
+
+.page__lead {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: var(--fg-muted);
+  max-width: 52ch;
+}
+
+.page__stats {
+  display: grid;
+  gap: var(--space-6);
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--line);
+}
+
+.page__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.page__stat-valor {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent-text);
+}
+
+@media (min-width: 760px) {
+  .page__stats {
+    grid-template-columns: repeat(3, auto);
+    gap: var(--space-8);
+    justify-content: start;
+  }
+}
+
+/* ------------------------------------------ Financiamento */
+
+.fin__shell {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.fin__sim {
+  display: grid;
+  gap: var(--space-5);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.fin__result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.fin__value {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 4.5vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--accent-text);
+}
+
+.fin__control {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.fin__note {
+  color: var(--fg-faint);
+}
+
+.fin__steps {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.fin__step {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.fin__step-n {
+  color: var(--accent-text);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.fin__step-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: var(--space-1);
+}
+
+.fin__step p {
+  color: var(--fg-muted);
+  font-size: var(--fs-sm);
+}
+
+@media (min-width: 1000px) {
+  .fin__shell { grid-template-columns: 1fr 1fr; }
+  .fin__steps { grid-template-columns: 1fr 1fr; gap: var(--space-6) var(--space-7); }
+}
+
+/* ------------------------------------------------ Critério */
+
+.principles__list {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.principles__item {
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+
+.principles__n {
+  color: var(--accent-text);
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.principles__title {
+  margin-bottom: var(--space-3);
+  max-width: 20ch;
+}
+
+.principles__body {
+  color: var(--fg-muted);
+  font-size: var(--fs-sm);
+  max-width: 46ch;
+}
+
+@media (min-width: 860px) {
+  .principles__list { grid-template-columns: 1fr 1fr; gap: var(--space-7) var(--space-8); }
+}
+
+/* ---------------------------------------------------- 404 */
+
+.notfound {
+  display: flex;
+  align-items: center;
+}
+
+.notfound__shell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  padding-block: clamp(4rem, 10vh, 7rem);
+}
+
+.notfound__body {
+  color: var(--fg-muted);
+  max-width: 48ch;
+}
