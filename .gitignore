@@ -1,8 +1,142 @@
-node_modules
-dist
-dist-ssr
-.DS_Store
-*.local
-.vite
+# ============================================================
+#  PHD Automóveis — Padrões de Exclusão
+#  Princípio: versionar apenas código necessário para rodar
+# ============================================================
 
-.tmp
+# --- DEPENDÊNCIAS E BUILD (recriados por npm install / npm run build)
+node_modules/
+dist/
+dist-ssr/
+build/
+.vite/
+*.tsbuildinfo
+out/
+
+# --- VARIÁVEIS DE AMBIENTE E SEGREDOS (nunca versionar credenciais)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.pub
+secrets.json
+credentials.json
+token.json
+tokens.json
+.auth/
+
+# --- DOCUMENTOS DE TRABALHO INTERNO
+.claude/
+.prompts/
+.instructions/
+.notes/
+PROMPT*.md
+ANALISE*.md
+.analysis/
+
+# --- CACHE DE FERRAMENTAS E BUILDS
+.cache/
+.temp/
+.tmp/
+.eslintcache
+.stylelintcache
+.node_cache/
+.bundle/
+coverage/
+.nyc_output/
+.jest-cache/
+.turbo/
+
+# --- LOGS (NUNCA versionar logs com credenciais)
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+lerna-debug.log.json
+debug.log
+.npm/
+
+# --- EDITORES E IDEs (arquivos de workspace local)
+.vscode/*
+!.vscode/extensions.json
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.idea/
+.idea_modules/
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+*.iml
+*.iws
+*.ipr
+.netbeans/
+
+# --- EDITORS TEMP FILES
+*.swp
+*.swo
+*.swn
+*~
+.vim/
+.vim_history
+.tern-port
+
+# --- SISTEMA OPERACIONAL
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Thumbs.db
+
+# --- PACOTE MANAGERS
+.pnpm-store/
+.yarn/cache/
+.yarn/install-state.gz
+pnpm-lock.yaml
+yarn.lock
+
+# --- TESTES
+.coverage/
+.nyc_output/
+.jest-cache/
+htmlcov/
+.pytest_cache/
+
+# --- DEPLOYMENT
+.vercel/
+.netlify/
+.firebase/
+.env.production.local
+
+# --- ARQUIVOS LOCAIS DESENVOLVEDOR (nunca commit)
+*.local
+*.swp
+*.private
+.development/
+.local/
+.secrets/
+
+# --- ARQUIVOS GRANDE QUE DEVEM SER IGNORADOS
+*.iso
+*.dmg
+*.tar
+*.zip
+*.rar
+*.7z
+

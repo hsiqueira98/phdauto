@@ -1,9 +1,14 @@
-# PHD Automóveis — A Coleção
+# PHD Automóveis — The Drive Gallery
 
-Conceito visual navegável do redesign da **PHD Automóveis** — Brasília, desde 1996.
+![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+![React](https://img.shields.io/badge/React-19.1.1-blue)
+![Vite](https://img.shields.io/badge/Vite-7.1.3-purple)
+![GSAP](https://img.shields.io/badge/GSAP-3.13.0-green)
+![License](https://img.shields.io/badge/License-Proprietário-red)
 
-Protótipo de apresentação comercial. **Sem backend**: o estoque é mockado em
-`src/data/vehicles.js`, que serve também como contrato de dados para a integração real.
+Um catálogo visual e cinematográfico de veículos seminovos da **PHD Automóveis** — Brasília, desde 1996.
+
+Uma nova forma de explorar e adquirir automóveis. Em vez de uma simples galeria de classificados, oferecemos uma experiência cinematográfica onde cada carro é apresentado como uma história. A navegação é fluida, as animações contam a narrativa, e o design premium comunica confiança.
 
 ---
 
