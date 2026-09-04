@@ -3,7 +3,7 @@ import { vehicles } from './vehicles';
 /**
  * Camada editorial sobre o estoque.
  * Tecnicamente os carros continuam sendo hatch/sedan/suv/pickup —
- * os "universos" são só a forma como a PHD escolhe apresentá-los.
+ * os "universos" são só a forma como a POLLY escolhe apresentá-los.
  */
 export const universes = [
   {
@@ -52,26 +52,26 @@ export const bodyLabels = {
   pickup: 'Picape',
 };
 
-export const timeline = [
+export const selectionSteps = [
   {
-    year: '1996',
-    title: 'Começamos vendendo carros.',
-    body: 'Uma loja em Brasília, um estoque pequeno e a ideia de que a palavra dada valia mais que a placa.',
+    n: '01',
+    title: 'A vida dá a direção.',
+    body: 'Cidade, estrada, rotina ou novos planos. Comece pelo que você espera do seu próximo carro.',
   },
   {
-    year: '2006',
-    title: 'Continuamos escolhendo carros.',
-    body: 'Dez anos depois, a seleção ficou mais rígida. Nem todo carro bom para vender é um carro bom para entregar.',
+    n: '02',
+    title: 'Os detalhes fazem a escolha.',
+    body: 'Explore versões, equipamentos e características. Compare com calma o que combina com você.',
   },
   {
-    year: '2016',
-    title: 'Milhares de histórias passaram por aqui.',
-    body: 'Primeiro carro, carro da família, carro que levou alguém para longe. Todos passaram pelo mesmo pátio.',
+    n: '03',
+    title: 'A clareza aproxima.',
+    body: 'Conheça os valores de referência e visualize possibilidades antes de dar o próximo passo.',
   },
   {
-    year: '2026',
-    title: 'Escolher um carro deveria ser especial.',
-    body: 'Trinta anos depois, continuamos acreditando na mesma coisa. Só mudamos a forma de mostrar.',
+    n: '04',
+    title: 'O próximo caminho é seu.',
+    body: 'Uma escolha que acompanha seu momento. Uma nova direção para descobrir com a POLLY.',
   },
 ];
 
@@ -109,7 +109,7 @@ export const colorSwatches = vehicles.reduce((acc, v) => {
 }, {});
 
 export const sortOptions = [
-  { id: 'curadoria', label: 'Curadoria PHD' },
+  { id: 'curadoria', label: 'Curadoria POLLY' },
   { id: 'preco-asc', label: 'Menor preço' },
   { id: 'preco-desc', label: 'Maior preço' },
   { id: 'ano-desc', label: 'Mais novo' },

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { useMediaQuery, useReducedMotion } from '@/lib/hooks';
 
@@ -18,6 +18,7 @@ export default function CardFlutuante({
   ...resto
 }) {
   const ref = useRef(null);
+  const bounds = useRef(null);
   const ponteiroFino = useMediaQuery('(hover: hover) and (pointer: fine)');
   const reduzido = useReducedMotion();
   const ativo = ponteiroFino && !reduzido;
@@ -43,21 +44,37 @@ export default function CardFlutuante({
   );
 
   const aoMover = (e) => {
-    if (!ativo || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
+    if (!ativo || !ref.current || e.pointerType === 'touch') return;
+    // Measure the stationary wrapper once, not the rotating card every frame.
+    const r = bounds.current ?? ref.current.getBoundingClientRect();
+    bounds.current = r;
+    if (!r.width || !r.height) return;
     px.set((e.clientX - (r.left + r.width / 2)) / r.width);
     py.set((e.clientY - (r.top + r.height / 2)) / r.height);
   };
 
   const aoSair = () => {
+    bounds.current = null;
     px.set(0);
     py.set(0);
   };
 
+  useEffect(() => {
+    if (!ativo) {
+      bounds.current = null;
+      px.set(0);
+      py.set(0);
+    }
+  }, [ativo, px, py]);
+
   return (
-    <div className={`flutuante ${className}`} onPointerMove={aoMover} onPointerLeave={aoSair}>
+    <div
+      ref={ref}
+      className={`flutuante ${className}`}
+      onPointerMove={ativo ? aoMover : undefined}
+      onPointerLeave={ativo ? aoSair : undefined}
+    >
       <motion.div
-        ref={ref}
         className="flutuante__card"
         style={ativo ? { rotateX, rotateY, transformPerspective: 1100 } : undefined}
         {...resto}

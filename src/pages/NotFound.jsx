@@ -11,8 +11,8 @@ export default function NotFound() {
           não está no pátio.
         </h1>
         <p className="notfound__body">
-          O endereço não corresponde a nenhum veículo da coleção. Pode ser um carro
-          que já saiu — acontece com os bons.
+          Esta página não faz parte da coleção POLLY. Volte para explorar
+          os veículos e encontrar uma nova direção.
         </p>
         <Link to="/colecao" className="btn btn--paper btn--lg">
           Ver a coleção

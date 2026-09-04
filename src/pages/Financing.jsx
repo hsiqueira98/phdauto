@@ -6,10 +6,10 @@ import { facets } from '@/data/taxonomy';
 import { Reveal } from '@/components/ui/atoms';
 
 const STEPS = [
-  { n: '01', title: 'Escolha a máquina', body: 'Qualquer carro da coleção pode ser financiado.' },
-  { n: '02', title: 'Simule aqui', body: 'Entrada, prazo e parcela na tela, antes de qualquer conversa.' },
-  { n: '03', title: 'Análise', body: 'Enviamos para as principais instituições e comparamos as taxas.' },
-  { n: '04', title: 'Assinatura', body: 'Documentação e transferência resolvidas pela PHD.' },
+  { n: '01', title: 'Encontre seu carro', body: 'Explore a coleção e escolha um valor de referência.' },
+  { n: '02', title: 'Visualize as parcelas', body: 'Ajuste a entrada e o prazo para explorar diferentes cenários.' },
+  { n: '03', title: 'Converse sobre condições', body: 'Em uma contratação real, taxas e aprovação dependem da instituição financeira.' },
+  { n: '04', title: 'Revise antes de decidir', body: 'Confira o custo total e as condições da proposta antes de assumir um compromisso.' },
 ];
 
 export default function Financing() {
@@ -37,8 +37,9 @@ export default function Financing() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className="page__lead">
-              Ninguém deveria precisar mandar mensagem para descobrir quanto fica a parcela.
-              Simule aqui, com os números na sua frente, e só depois fale com a gente.
+              Explore a entrada, o prazo e uma estimativa de parcela para o seu próximo
+              carro. Esta é uma demonstração: os valores não representam uma oferta
+              de crédito da POLLY VEÍCULOS.
             </p>
           </Reveal>
         </div>

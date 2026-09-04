@@ -1,10 +1,10 @@
-import { gsap } from './gsap';
+import { gsap, prefersReducedMotion } from './gsap';
 
 /**
  * UTILITÁRIOS DE ANIMAÇÃO
  *
  * Funções reutilizáveis para os padrões que se repetem no site.
- * Quem chama é responsável por checar `prefersReducedMotion()`.
+ * Os helpers respeitam movimento reduzido mesmo fora de um contexto React.
  */
 
 /* ========================= REVEALS ========================= */
@@ -19,7 +19,7 @@ export const createTextReveal = (element, config = {}) => {
     splitBy = 'word', // 'word' | 'line' | 'letter'
   } = config;
 
-  if (!element) return null;
+  if (!element || prefersReducedMotion()) return null;
 
   const seletor = {
     word: '.split-words__word',
@@ -36,7 +36,7 @@ export const createTextReveal = (element, config = {}) => {
 /** Revelação por máscara. Guarda o estado inicial no próprio elemento. */
 export const createClipPathReveal = (element, config = {}) => {
   const { duration = 0.9, ease = 'power3.out', delay = 0, direction = 'left' } = config;
-  if (!element) return null;
+  if (!element || prefersReducedMotion()) return null;
 
   const mascaras = {
     left: 'inset(0 100% 0 0)',
@@ -54,14 +54,14 @@ export const createClipPathReveal = (element, config = {}) => {
 
 export const createScaleReveal = (element, config = {}) => {
   const { duration = 0.9, ease = 'back.out(1.4)', delay = 0, scale = 0.8 } = config;
-  if (!element) return null;
+  if (!element || prefersReducedMotion()) return null;
   return gsap.from(element, { scale, opacity: 0, duration, ease, delay });
 };
 
 /* ========================= PARALLAX ======================== */
 
 export const createParallaxLayers = (container, depths = [0.1, 0.2, 0.5]) => {
-  if (!container) return [];
+  if (!container || prefersReducedMotion()) return [];
   const camadas = container.querySelectorAll('[data-parallax]');
 
   return Array.from(camadas).map((camada, i) => {
@@ -84,7 +84,7 @@ export const createParallaxLayers = (container, depths = [0.1, 0.2, 0.5]) => {
 
 export const createScrollZoom = (element, config = {}) => {
   const { from = 0.9, to = 1.2, start = 'top 80%', end = 'top 20%' } = config;
-  if (!element) return null;
+  if (!element || prefersReducedMotion()) return null;
 
   return gsap.fromTo(
     element,
@@ -99,7 +99,7 @@ export const createScrollZoom = (element, config = {}) => {
 
 export const createScrollFade = (element, config = {}) => {
   const { from = 0.3, to = 1 } = config;
-  if (!element) return null;
+  if (!element || prefersReducedMotion()) return null;
 
   return gsap.fromTo(
     element,
@@ -126,27 +126,57 @@ export const createScrollFade = (element, config = {}) => {
  */
 export const createMagneticButton = (element, config = {}) => {
   const { force = 0.25, ease = 'power2.out', returnDuration = 0.4 } = config;
-  if (!element) return () => {};
+  if (!element || prefersReducedMotion() ||
+      !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return () => {};
 
-  const aoMover = (e) => {
+  let bounds;
+  let originScrollX = 0;
+  let originScrollY = 0;
+  let xTo;
+  let yTo;
+  const context = gsap.context(() => {
+    xTo = gsap.quickTo(element, 'x', { duration: 0.3, ease });
+    yTo = gsap.quickTo(element, 'y', { duration: 0.3, ease });
+  });
+
+  const measure = () => {
     const r = element.getBoundingClientRect();
-    gsap.to(element, {
-      x: (e.clientX - (r.left + r.width / 2)) * force,
-      y: (e.clientY - (r.top + r.height / 2)) * force,
-      duration: 0.3,
-      ease,
-    });
+    bounds = {
+      x: r.left + r.width / 2 - Number(gsap.getProperty(element, 'x')),
+      y: r.top + r.height / 2 - Number(gsap.getProperty(element, 'y')),
+    };
+    originScrollX = window.scrollX;
+    originScrollY = window.scrollY;
   };
 
-  const aoSair = () => gsap.to(element, { x: 0, y: 0, duration: returnDuration, ease });
+  const aoMover = (e) => {
+    if (e.pointerType === 'touch') return;
+    if (!bounds) measure();
+    // Cache layout at pointer entry; only update reusable tweens while moving.
+    xTo.tween.duration(0.3);
+    yTo.tween.duration(0.3);
+    xTo((e.clientX - bounds.x + window.scrollX - originScrollX) * force);
+    yTo((e.clientY - bounds.y + window.scrollY - originScrollY) * force);
+  };
 
-  element.addEventListener('pointermove', aoMover);
+  const aoSair = () => {
+    bounds = null;
+    xTo.tween.duration(returnDuration);
+    yTo.tween.duration(returnDuration);
+    xTo(0);
+    yTo(0);
+  };
+
+  element.addEventListener('pointerenter', measure, { passive: true });
+  element.addEventListener('pointermove', aoMover, { passive: true });
   element.addEventListener('pointerleave', aoSair);
 
   return () => {
+    element.removeEventListener('pointerenter', measure);
     element.removeEventListener('pointermove', aoMover);
     element.removeEventListener('pointerleave', aoSair);
-    gsap.killTweensOf(element);
+    // Revert only this effect, restoring the original transform as well.
+    context.revert();
   };
 };
 
@@ -154,7 +184,7 @@ export const createMagneticButton = (element, config = {}) => {
 
 export const createSectionSequence = (container, config = {}) => {
   const { stagger = 0.1, duration = 0.9, ease = 'power3.out', start = 'top 78%' } = config;
-  if (!container) return null;
+  if (!container || prefersReducedMotion()) return null;
 
   const elementos = container.querySelectorAll('[data-animate]');
   if (!elementos.length) return null;
@@ -171,7 +201,7 @@ export const createSectionSequence = (container, config = {}) => {
 
 export const createStaggerSequence = (elements, config = {}) => {
   const { stagger = 0.05, duration = 0.9, ease = 'power3.out', from = { opacity: 0, y: 20 } } = config;
-  if (!elements || !elements.length) return null;
+  if (!elements || !elements.length || prefersReducedMotion()) return null;
   return gsap.from(elements, { ...from, duration, stagger, ease });
 };
 
@@ -181,6 +211,11 @@ export const createStaggerSequence = (elements, config = {}) => {
 export const createCountUp = (element, target, config = {}) => {
   const { duration = 2, ease = 'power1.inOut', formatar = null } = config;
   if (!element) return null;
+  if (prefersReducedMotion()) {
+    const value = Math.floor(target);
+    element.textContent = formatar ? formatar(value) : value.toLocaleString('pt-BR');
+    return null;
+  }
 
   const contador = { valor: 0 };
   return gsap.to(contador, {
@@ -203,10 +238,11 @@ export const createCountUp = (element, target, config = {}) => {
  */
 export const createColorShift = (element, colors, config = {}) => {
   const { duration = 3, ease = 'none', property = 'backgroundColor' } = config;
-  if (!element || !colors || colors.length < 2) return null;
+  if (!element || !colors || colors.length < 2 || prefersReducedMotion()) return null;
 
   const proxy = { p: 0 };
   const interpolar = gsap.utils.interpolate(colors);
+  const setColor = gsap.quickSetter(element, property);
 
   return gsap.to(proxy, {
     p: 1,
@@ -214,22 +250,20 @@ export const createColorShift = (element, colors, config = {}) => {
     ease,
     repeat: -1,
     yoyo: true,
-    onUpdate: () => gsap.set(element, { [property]: interpolar(proxy.p) }),
+    onUpdate: () => setColor(interpolar(proxy.p)),
   });
 };
 
 /**
- * Respiração sutil da imagem.
- * Blur é caro por quadro, então o peso fica na escala (composta na
- * GPU) e o desfoque entra só como um traço.
+ * Respiração sutil da imagem usando apenas transformação composta.
+ * Evita filtros em fotografias grandes, que exigem repintura a cada quadro.
  */
 export const createDistortionWave = (element, config = {}) => {
   const { duration = 4, intensity = 1 } = config;
-  if (!element) return null;
+  if (!element || prefersReducedMotion()) return null;
 
   return gsap.to(element, {
     scale: 1 + 0.015 * intensity,
-    filter: `blur(${0.6 * intensity}px) saturate(1.05)`,
     duration,
     ease: 'sine.inOut',
     repeat: -1,

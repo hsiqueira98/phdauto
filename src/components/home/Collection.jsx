@@ -1,195 +1,94 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { Link } from 'react-router-dom';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
-import { featuredVehicles } from '@/data/vehicles';
+import { gsap } from '@/lib/gsap';
+import { featuredVehicles, vehicles } from '@/data/vehicles';
 import { formatKm, formatPrice, pad2 } from '@/lib/format';
 import { FotoVeiculo } from '@/components/ui/Foto';
+import { useReducedMotion } from '@/lib/hooks';
+import { useLenis } from '@/components/layout/SmoothScroll';
 
-/**
- * A COLEÇÃO
- *
- * Uma faixa horizontal comandada pela rolagem. A máquina central ganha
- * escala e as laterais recuam — mais catálogo de design do que
- * listagem de classificados.
- *
- * Em telas pequenas ou com movimento reduzido, o mesmo markup vira um
- * carrossel nativo com scroll-snap. Nenhuma função depende da animação.
- */
+const selection = featuredVehicles.slice(0, 4);
 export default function Collection() {
-  const raiz = useRef(null);
-  const trilho = useRef(null);
+  const root = useRef(null);
+  const viewport = useRef(null);
+  const rail = useRef(null);
+  const scene = useRef(null);
+  const progress = useRef(null);
+  const current = useRef(0);
+  const [active, setActive] = useState(0);
+  const lenis = useLenis();
+  const reduced = useReducedMotion();
+  const showIndex = (index) => {
+    if (current.current !== index) { current.current = index; setActive(index); }
+  };
+  const nativeTargets = () => {
+    const max = Math.max(0, viewport.current.scrollWidth - viewport.current.clientWidth);
+    const positions = [...rail.current.children].map(card => Math.max(0, Math.min(max,
+      card.offsetLeft - rail.current.offsetLeft + card.clientWidth / 2 - viewport.current.clientWidth / 2,
+    )));
+    return { max, positions };
+  };
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-
-      mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
-        const el = trilho.current;
-        const distancia = () => Math.max(0, el.scrollWidth - window.innerWidth);
-
-        const percurso = gsap.to(el, {
-          x: () => -distancia(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: raiz.current,
-            start: 'top top',
-            end: () => `+=${distancia()}`,
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
-          },
-        });
-
-        /* Perspectiva: o cartão chega girado, endireita no centro e
-           gira para o outro lado ao sair. O desfoque e a sombra
-           acompanham — o que está longe do centro perde nitidez. */
-        gsap.utils.toArray('.colecao__painel').forEach((painel) => {
-          const cartao = painel.querySelector('.colecao__cartao');
-
-          const longe = {
-            scale: 0.86,
-            opacity: 0.42,
-            filter: 'blur(2.5px) saturate(0.75)',
-            boxShadow: '0 6px 18px rgba(0,0,0,0.25)',
-          };
-
-          gsap
-            .timeline({
-              scrollTrigger: {
-                trigger: painel,
-                containerAnimation: percurso,
-                start: 'left right',
-                end: 'right left',
-                scrub: true,
-              },
-            })
-            .fromTo(
-              cartao,
-              { ...longe, rotationY: 14 },
-              {
-                scale: 1,
-                opacity: 1,
-                rotationY: 0,
-                filter: 'blur(0px) saturate(1)',
-                boxShadow: '0 28px 60px rgba(0,0,0,0.55)',
-                ease: 'power2.out',
-              },
-            )
-            .to(cartao, { ...longe, rotationY: -14, ease: 'power2.in' });
-        });
-
-        gsap.fromTo(
-          '.colecao__progresso-fill',
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: raiz.current,
-              start: 'top top',
-              end: () => `+=${distancia()}`,
-              scrub: true,
-            },
-          },
-        );
-
-        return () => ScrollTrigger.refresh();
+  useGSAP(() => {
+    const media = gsap.matchMedia();
+    media.add('(min-width: 1000px) and (min-height: 700px) and (pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
+      const distance = () => Math.max(0, rail.current.scrollWidth - viewport.current.clientWidth);
+      if (distance() <= 0) return;
+      root.current.dataset.pinned = 'true';
+      viewport.current.scrollLeft = 0;
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          id: 'polly-collection', trigger: root.current, start: 'top top',
+          end: () => `+=${distance()}`, pin: true, scrub: .45, invalidateOnRefresh: true,
+          onUpdate: self => showIndex(Math.round(self.progress * (selection.length - 1))),
+        },
       });
+      timeline.to(rail.current, { x: () => -distance(), duration: 1, ease: 'none' }, 0)
+        .fromTo('.polly-collection__progress span', { scaleX: 0 }, { scaleX: 1, duration: 1, ease: 'none' }, 0);
+      scene.current = timeline.scrollTrigger;
+      return () => { scene.current = null; delete root.current?.dataset.pinned; };
+    });
+    return () => media.revert();
+  }, { scope: root });
 
-      return () => mm.revert();
-    },
-    { scope: raiz },
-  );
+  const goTo = (index, immediate = false) => {
+    const next = Math.max(0, Math.min(selection.length - 1, index));
+    showIndex(next);
+    if (scene.current) {
+      const trigger = scene.current;
+      const target = trigger.start + (trigger.end - trigger.start) * next / (selection.length - 1);
+      if (lenis) lenis.scrollTo(target, { immediate, duration: .55 });
+      else window.scrollTo({ top: target, behavior: reduced || immediate ? 'instant' : 'smooth' });
+    } else {
+      viewport.current.scrollTo({ left: nativeTargets().positions[next], behavior: reduced || immediate ? 'instant' : 'smooth' });
+    }
+  };
 
-  return (
-    <section className="colecao" ref={raiz} id="colecao">
-      <div className="colecao__topo">
-        <div className="section-index meta">
-          <span className="section-index__num">03</span>
-          <span>A coleção</span>
-        </div>
-        <p className="colecao__dica meta">
-          Arraste ou role <span aria-hidden="true">→</span>
-        </p>
+  return <section id="colecao" className="polly-collection" ref={root} aria-labelledby="collection-title">
+    <div className="polly-collection__heading"><div><p className="polly-kicker">03 / A COLEÇÃO</p><h2 id="collection-title">Desejo, em <span>movimento.</span></h2></div><Link className="polly-text-link" to="/colecao">Ver os {vehicles.length} veículos <span aria-hidden="true">↗</span></Link></div>
+    <div className="polly-collection__viewport" ref={viewport} onScroll={() => {
+      if (scene.current || !rail.current) return;
+      const { max, positions } = nativeTargets();
+      const left = viewport.current.scrollLeft;
+      const ratio = max ? Math.min(1, Math.max(0, left / max)) : 1;
+      if (progress.current) progress.current.style.transform = `scaleX(${ratio})`;
+      const closest = positions.reduce((best, target, index) =>
+        Math.abs(target - left) < Math.abs(positions[best] - left) ? index : best, current.current);
+      showIndex(max > 0 && max - left < 2 ? selection.length - 1 : closest);
+    }}>
+      <div className="polly-collection__rail" ref={rail} onFocusCapture={event => {
+        const card = event.target.closest('[data-slide]');
+        if (card && scene.current) goTo(Number(card.dataset.slide), true);
+      }}>
+        {selection.map((vehicle, index) => <article className="polly-vehicle" data-slide={index} key={vehicle.id}>
+          <Link to={`/veiculo/${vehicle.slug}`} className="polly-vehicle__link" data-cursor="Conhecer">
+            <div className="polly-vehicle__image"><FotoVeiculo veiculo={vehicle} proporcao="16 / 10" veu="leve" /><span className="polly-vehicle__index">{pad2(index + 1)} / SELEÇÃO POLLY</span><span className="polly-vehicle__arrow" aria-hidden="true">↗</span></div>
+            <div className="polly-vehicle__details"><div><p className="polly-kicker">{vehicle.brand}</p><h3>{vehicle.model}</h3><p className="polly-vehicle__spec">{vehicle.year} <span>•</span> {formatKm(vehicle.km)} <span>•</span> {vehicle.transmission}</p></div><strong>{formatPrice(vehicle.price)}</strong></div>
+          </Link>
+        </article>)}
       </div>
-
-      <div className="colecao__janela">
-        <div className="colecao__trilho" ref={trilho}>
-          <div className="colecao__painel colecao__painel--texto">
-            <div className="colecao__abertura">
-              <h2 className="t-h1">Oito máquinas em destaque</h2>
-              <p className="t-lead">
-                O estoque completo continua a um clique. Isto aqui é a vitrine — a parte
-                que a gente mostraria primeiro se você entrasse na loja.
-              </p>
-              <Link to="/colecao" className="btn btn--paper">
-                Ver as 24 máquinas
-              </Link>
-            </div>
-          </div>
-
-          {featuredVehicles.map((v, i) => (
-            <article className="colecao__painel" key={v.id}>
-              <Link to={`/veiculo/${v.slug}`} className="colecao__cartao" data-cursor="Ver máquina">
-                <FotoVeiculo
-                  veiculo={v}
-                  proporcao="4 / 3"
-                  veu="medio"
-                  className="colecao__foto"
-                />
-
-                <div className="colecao__info">
-                  <div className="colecao__cabecalho">
-                    <span className="meta colecao__num">
-                      {pad2(i + 1)} / {pad2(featuredVehicles.length)}
-                    </span>
-                    <span className="meta colecao__marca">{v.brand}</span>
-                    <h3 className="colecao__modelo t-h3">{v.model}</h3>
-                  </div>
-
-                  <dl className="colecao__dados">
-                    <div>
-                      <dt className="meta">Ano</dt>
-                      <dd>{v.year}</dd>
-                    </div>
-                    <div>
-                      <dt className="meta">Rodagem</dt>
-                      <dd>{formatKm(v.km)}</dd>
-                    </div>
-                    <div>
-                      <dt className="meta">Motor</dt>
-                      <dd>{v.engine}</dd>
-                    </div>
-                  </dl>
-
-                  <div className="colecao__rodape">
-                    <span className="colecao__preco">{formatPrice(v.price)}</span>
-                    <span className="colecao__cta meta">
-                      Ver máquina <span aria-hidden="true">→</span>
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            </article>
-          ))}
-
-          <div className="colecao__painel colecao__painel--texto">
-            <div className="colecao__abertura">
-              <p className="meta">Fim da vitrine</p>
-              <h3 className="t-h2">O estoque inteiro está organizado por filtros.</h3>
-              <Link to="/colecao" className="btn btn--paper">
-                Abrir catálogo completo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="colecao__progresso" aria-hidden="true">
-        <span className="colecao__progresso-fill" />
-      </div>
-    </section>
-  );
+    </div>
+    <div className="polly-collection__foot"><span className="polly-kicker"><b>{pad2(active + 1)}</b> / {pad2(selection.length)} EM FOCO</span><div className="polly-collection__progress" aria-hidden="true"><span ref={progress} /></div><div className="polly-collection__controls"><button type="button" aria-label="Veículo anterior" disabled={active === 0} onClick={() => goTo(current.current - 1)}>←</button><button type="button" aria-label="Próximo veículo" disabled={active === selection.length - 1} onClick={() => goTo(current.current + 1)}>→</button></div></div>
+  </section>;
 }

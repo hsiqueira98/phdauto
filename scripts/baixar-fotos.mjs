@@ -1,12 +1,12 @@
 /**
- * BAIXAR FOTOS — PHD Automóveis
+ * BAIXAR FOTOS — POLLY VEÍCULOS
  *
  * Busca no Wikimedia Commons fotografias reais dos modelos do estoque
  * mockado e salva em public/imagens/veiculos/.
  *
  * Por que Commons: é a fonte aberta, sem chave de API, que tem foto do
  * modelo certo (Golf GTI, Duster, Compass...). Banco de imagem genérico
- * mostraria "um SUV qualquer" — numa apresentação para a PHD isso salta
+ * mostraria "um SUV qualquer" — numa apresentação para a POLLY isso salta
  * aos olhos.
  *
  * A busca do Commons casa por relevância frouxa: pesquisar "Volkswagen
@@ -15,7 +15,7 @@
  * de carro errado.
  *
  * Estas imagens são PLACEHOLDER. Na produção dão lugar ao acervo
- * fotografado no showroom (PHD Photo Standard).
+ * fotografado no showroom (POLLY Photo Standard).
  *
  * Uso:
  *   node scripts/baixar-fotos.mjs --simular     # só lista o que escolheria
@@ -27,7 +27,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const API = 'https://commons.wikimedia.org/w/api.php';
-const UA = 'PHD-Drive-Gallery-Prototype/1.0 (prototipo de apresentacao)';
+const UA = 'POLLY-Drive-Gallery-Prototype/1.0 (prototipo de apresentacao)';
 const OUT = path.resolve('public/imagens/veiculos');
 const LARGURA = 1400;
 const POR_VEICULO = 4;
@@ -73,7 +73,7 @@ const VETADO = [
 
 /* Fotógrafos automotivos do Commons com enquadramento consistente:
    carro inteiro, 3/4 dianteiro, fundo limpo. É o que mais aproxima o
-   acervo emprestado do padrão que a PHD vai fotografar. */
+   acervo emprestado do padrão que a POLLY vai fotografar. */
 const AUTORES_BONS = [
   'vauxford', 'alexander migl', 'charles01', 'kickaffe', 'thomas doerfer',
   'eurovisionnim', 'mr.choppers', 'dave_7', 'rutger van der maar',
@@ -290,8 +290,8 @@ async function main() {
       'Wikimedia Commons. Cada arquivo mantém a licença de origem — a maioria é',
       'Creative Commons, com exigência de atribuição.',
       '',
-      '> Na produção, estas fotos dão lugar ao acervo próprio da PHD, fotografado',
-      '> no showroom seguindo o PHD Photo Standard. Este arquivo existe para que',
+      '> Na produção, estas fotos dão lugar ao acervo próprio da POLLY, fotografado',
+      '> no showroom seguindo o POLLY Photo Standard. Este arquivo existe para que',
       '> nada seja publicado sem o crédito devido enquanto isso não acontece.',
       '',
       `Total: ${creditos.length} arquivos.`,

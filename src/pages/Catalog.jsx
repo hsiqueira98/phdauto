@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import FilterPanel from '@/components/catalog/FilterPanel';
 import VehicleCard from '@/components/catalog/VehicleCard';
 import { vehicles } from '@/data/vehicles';
@@ -17,6 +17,30 @@ import {
 import { parseQuery, searchSuggestions } from '@/lib/smartSearch';
 import { useLockBodyScroll, useMediaQuery } from '@/lib/hooks';
 
+/* A saída continua animada, mas o painel deixa de receber foco imediatamente. */
+function CatalogFilterDrawer({ children, isDesktop, panelRef }) {
+  const present = useIsPresent();
+  return (
+    <motion.aside
+      ref={panelRef}
+      id="catalog-filters"
+      className="catalog__aside"
+      role={!isDesktop && present ? 'dialog' : undefined}
+      aria-modal={!isDesktop && present ? true : undefined}
+      aria-label="Filtros da coleção"
+      aria-hidden={!present || undefined}
+      inert={!present || undefined}
+      tabIndex={-1}
+      initial={isDesktop ? { width: 0, opacity: 0 } : { x: '-100%' }}
+      animate={isDesktop ? { width: 300, opacity: 1 } : { x: 0 }}
+      exit={isDesktop ? { width: 0, opacity: 0 } : { x: '-100%' }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.aside>
+  );
+}
+
 /**
  * CATÁLOGO
  *
@@ -32,9 +56,80 @@ export default function Catalog() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [view, setView] = useState('gallery');
   const inputRef = useRef(null);
+  const drawerRef = useRef(null);
+  const filterButtonRef = useRef(null);
   const isDesktop = useMediaQuery('(min-width: 1100px)');
+  const modalOpen = drawerOpen && !isDesktop;
 
-  useLockBodyScroll(drawerOpen && !isDesktop);
+  useLockBodyScroll(modalOpen);
+
+  useEffect(() => {
+    const panel = drawerRef.current;
+    if (!modalOpen || !panel) return undefined;
+
+    const returnFocus = filterButtonRef.current;
+    const outside = [];
+
+    // Isola os irmãos de cada ancestral, incluindo cabeçalho e rodapé globais.
+    // O fundo continua clicável e não participa da sequência de teclado.
+    for (let branch = panel; branch?.parentElement; branch = branch.parentElement) {
+      for (const sibling of branch.parentElement.children) {
+        if (sibling === branch || sibling.classList.contains('catalog__scrim')) continue;
+        outside.push([sibling, sibling.getAttribute('inert')]);
+        sibling.setAttribute('inert', '');
+      }
+      if (branch.parentElement === document.body) break;
+    }
+
+    const focusable = () => [...panel.querySelectorAll(
+      'button, a[href], input:not([type="hidden"]), select, textarea, [tabindex]',
+    )].filter((element) => {
+      const style = getComputedStyle(element);
+      return !element.disabled && element.tabIndex >= 0
+        && !element.closest('[hidden], [inert], [aria-hidden="true"]')
+        && style.display !== 'none' && style.visibility !== 'hidden';
+    });
+
+    const focusFirst = () => (focusable()[0] ?? panel).focus({ preventScroll: true });
+    focusFirst();
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        setDrawerOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const controls = focusable();
+      const first = controls[0] ?? panel;
+      const last = controls.at(-1) ?? panel;
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === panel || !panel.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || active === panel || !panel.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    const onFocusIn = (event) => {
+      if (!panel.contains(event.target)) focusFirst();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('focusin', onFocusIn);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('focusin', onFocusIn);
+      outside.forEach(([element, previous]) => {
+        if (previous === null) element.removeAttribute('inert');
+        else element.setAttribute('inert', previous);
+      });
+      if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+    };
+  }, [modalOpen]);
 
   const patch = (fragment) => {
     const next = { ...filters, ...fragment };
@@ -86,7 +181,7 @@ export default function Catalog() {
         <div className="catalog__header-top">
           <div className="section-index meta">
             <span className="section-index__num">01</span>
-            <span>Catálogo completo</span>
+            <span>Coleção POLLY · demonstração</span>
           </div>
           <p className="catalog__total meta">
             {String(results.length).padStart(2, '0')} de {vehicles.length} máquinas
@@ -145,6 +240,7 @@ export default function Catalog() {
             <button
               type="button"
               className={`catalog__universe ${filters.universes.length === 0 ? 'is-active' : ''}`}
+              aria-pressed={filters.universes.length === 0}
               onClick={() => patch({ universes: [] })}
             >
               Tudo
@@ -155,6 +251,7 @@ export default function Catalog() {
               <button
                 type="button"
                 className={`catalog__universe ${filters.universes.includes(u.id) ? 'is-active' : ''}`}
+                aria-pressed={filters.universes.includes(u.id)}
                 onClick={() =>
                   patch({
                     universes: filters.universes.includes(u.id)
@@ -173,9 +270,12 @@ export default function Catalog() {
       <div className="catalog__toolbar">
         <button
           type="button"
+          ref={filterButtonRef}
           className="catalog__filters-toggle"
           onClick={() => setDrawerOpen((v) => !v)}
           aria-expanded={drawerOpen}
+          aria-controls={drawerOpen ? 'catalog-filters' : undefined}
+          aria-haspopup={!isDesktop ? 'dialog' : undefined}
         >
           <span className="catalog__filters-icon" aria-hidden="true">
             <span />
@@ -260,13 +360,7 @@ export default function Catalog() {
       <div className={`catalog__body ${drawerOpen ? 'has-filters' : ''}`}>
         <AnimatePresence>
           {drawerOpen && (
-            <motion.aside
-              className="catalog__aside"
-              initial={isDesktop ? { width: 0, opacity: 0 } : { x: '-100%' }}
-              animate={isDesktop ? { width: 300, opacity: 1 } : { x: 0 }}
-              exit={isDesktop ? { width: 0, opacity: 0 } : { x: '-100%' }}
-              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <CatalogFilterDrawer isDesktop={isDesktop} panelRef={drawerRef}>
               <div className="catalog__aside-inner">
                 <div className="catalog__aside-head">
                   <p className="meta">Filtros</p>
@@ -281,7 +375,7 @@ export default function Catalog() {
                   resultCount={results.length}
                 />
               </div>
-            </motion.aside>
+            </CatalogFilterDrawer>
           )}
         </AnimatePresence>
 
@@ -291,8 +385,8 @@ export default function Catalog() {
               <p className="t-h2">Nada bate com isso.</p>
               <p>
                 Nenhuma máquina do estoque atende a todos os critérios ao mesmo tempo.
-                Tente remover um filtro — ou fale com a gente: às vezes o carro certo
-                chega antes de aparecer no site.
+                Tente remover um filtro ou explore outro perfil de direção para
+                descobrir mais possibilidades nesta coleção de demonstração.
               </p>
               <button type="button" className="btn btn--paper" onClick={reset}>
                 Limpar filtros
@@ -310,12 +404,13 @@ export default function Catalog() {
         </section>
       </div>
 
-      {drawerOpen && !isDesktop && (
+      {modalOpen && (
         <button
           type="button"
           className="catalog__scrim"
           onClick={() => setDrawerOpen(false)}
-          aria-label="Fechar filtros"
+          aria-hidden="true"
+          tabIndex={-1}
         />
       )}
     </main>

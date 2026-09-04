@@ -1,8 +1,10 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Observer } from 'gsap/Observer';
+import { useGSAP } from '@gsap/react';
 
-gsap.registerPlugin(ScrollTrigger, Observer);
+// Bind React contexts to this exact engine instance (including CJS/ESM tests).
+gsap.registerPlugin(ScrollTrigger, Observer, useGSAP);
 
 /**
  * Defaults do "motor cinematográfico".

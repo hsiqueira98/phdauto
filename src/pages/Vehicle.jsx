@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import { AnimatePresence, motion } from 'motion/react';
-import { gsap, prefersReducedMotion } from '@/lib/gsap';
+import { gsap } from '@/lib/gsap';
+import { useReducedMotion } from '@/lib/hooks';
 import { getRelated, getVehicleBySlug } from '@/data/vehicles';
 import { bodyLabels, getUniverse } from '@/data/taxonomy';
 import { estimateInstallment, formatKm, formatPrice, pad2 } from '@/lib/format';
@@ -93,16 +94,19 @@ export default function Vehicle() {
   const { slug } = useParams();
   const vehicle = getVehicleBySlug(slug);
   const raiz = useRef(null);
+  const reduced = useReducedMotion();
   const [foto, setFoto] = useState(0);
+  const [contactRequested, setContactRequested] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setFoto(0);
+    setContactRequested(false);
   }, [slug]);
 
   useGSAP(
     () => {
-      if (!vehicle || prefersReducedMotion()) return;
+      if (!vehicle || reduced) return;
 
       gsap
         .timeline({ defaults: { ease: 'expo.out' } })
@@ -116,7 +120,7 @@ export default function Vehicle() {
         scrollTrigger: { trigger: '.vhero', start: 'top top', end: 'bottom top', scrub: true },
       });
     },
-    { scope: raiz, dependencies: [slug] },
+    { scope: raiz, dependencies: [slug, reduced], revertOnUpdate: true },
   );
 
   if (!vehicle) return <NotFound />;
@@ -170,7 +174,7 @@ export default function Vehicle() {
               <div className="vhero__linha">
                 <span className="vhero__preco">{formatPrice(vehicle.price)}</span>
                 <span className="meta vhero__situacao">
-                  {vehicle.status === 'reservado' ? 'Reservado' : 'Disponível no showroom'}
+                  {vehicle.status === 'reservado' ? 'Reservado · demonstração' : 'Veículo de demonstração'}
                 </span>
               </div>
             </div>
@@ -222,15 +226,15 @@ export default function Vehicle() {
             <div className="vgaleria__palco">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={foto}
-                  initial={{ opacity: 0, scale: 1.02 }}
+                  key={`${slug}-${foto}`}
+                  initial={reduced ? false : { opacity: 0, scale: 1.02 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: reduced ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="vgaleria__quadro"
                 >
                   <Foto
-                    src={fotos[foto]}
+                    src={fotos[foto] ?? fotos[0]}
                     alt={`${vehicle.brand} ${vehicle.model} — foto ${foto + 1} de ${fotos.length}`}
                     proporcao="16 / 9"
                     veu="leve"
@@ -282,30 +286,34 @@ export default function Vehicle() {
             </h2>
 
             <ul className="vconversao__pontos">
-              <li>Garantia de motor e câmbio por 90 dias</li>
-              <li>Laudo cautelar e histórico de procedência</li>
-              <li>Aceitamos seu usado na troca</li>
-              <li>Financiamento com as principais instituições</li>
+              <li>Conheça a versão e os equipamentos</li>
+              <li>Confira histórico e condições na avaliação real</li>
+              <li>Explore possibilidades para seu usado</li>
+              <li>Visualize uma simulação de parcelas</li>
             </ul>
 
             <div className="vconversao__acoes">
               <Magnetic>
-                <a
+                <button
+                  type="button"
                   className="btn btn--accent btn--lg"
-                  href={`https://wa.me/5561000000000?text=${encodeURIComponent(
-                    `Olá! Tenho interesse no ${vehicle.brand} ${vehicle.model} ${vehicle.year}.`,
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  data-cursor="WhatsApp"
+                  onClick={() => setContactRequested(true)}
+                  aria-describedby={contactRequested ? 'vehicle-contact-notice' : undefined}
+                  data-cursor="Conhecer"
                 >
-                  Falar sobre esta máquina
-                </a>
+                  Tenho interesse neste carro
+                </button>
               </Magnetic>
               <Link to="/colecao" className="btn btn--ghost btn--lg">
                 Voltar à coleção
               </Link>
             </div>
+            {contactRequested && (
+              <p id="vehicle-contact-notice" className="simulacao__nota meta" role="status">
+                Interesse demonstrado no {vehicle.brand} {vehicle.model}. Esta apresentação
+                não envia mensagens. O canal oficial da POLLY VEÍCULOS será divulgado aqui.
+              </p>
+            )}
           </div>
 
           <Reveal className="vconversao__painel">

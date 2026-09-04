@@ -77,7 +77,7 @@
   height: 100%;
   object-fit: cover;
   transform: scale(var(--foto-escala, 1));
-  /* Graduação PHD: tira o excesso de cor de origens diferentes
+  /* Graduação POLLY: tira o excesso de cor de origens diferentes
      e aproxima todas do mesmo grafite. */
   filter: saturate(0.82) contrast(1.06) brightness(0.94);
   opacity: 0;

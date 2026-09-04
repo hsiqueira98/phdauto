@@ -1,5 +1,5 @@
 /* ============================================================
-   PHD AUTOMÓVEIS
+   POLLY VEÍCULOS
    Ordem de cascata:
    tokens → base → effects → animations → components → seções → páginas
    ============================================================ */
@@ -14,3 +14,5 @@
 @import './vehicle.css';
 @import './drivemode.css';
 @import './pages.css';
+@import './polly.css';
+@import './polly-pages.css';

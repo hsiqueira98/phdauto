@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import Lenis from 'lenis';
-import { gsap, ScrollTrigger, prefersReducedMotion } from '@/lib/gsap';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
+import { useMediaQuery, useReducedMotion } from '@/lib/hooks';
 
 const LenisContext = createContext(null);
 
@@ -15,34 +16,39 @@ export const useLenis = () => useContext(LenisContext);
  */
 export default function SmoothScroll({ children }) {
   const [lenis, setLenis] = useState(null);
-  const rafRef = useRef(null);
+  const desktop = useMediaQuery('(min-width: 960px) and (hover: hover) and (pointer: fine)');
+  const reduced = useReducedMotion();
 
   useEffect(() => {
-    if (prefersReducedMotion()) return undefined;
+    // Touch devices keep their native momentum and never register a ticker.
+    // These preferences are reactive, including changes while the page is open.
+    if (!desktop || reduced) return undefined;
 
     const instance = new Lenis({
-      duration: 1.15,
-      lerp: 0.09,
+      autoRaf: false,
+      lerp: 0.12,
       smoothWheel: true,
+      syncTouch: false,
       wheelMultiplier: 1,
-      touchMultiplier: 1.6,
-      easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)),
+      prevent: (node) => Boolean(node.closest('dialog, [role="dialog"]')),
     });
 
-    instance.on('scroll', ScrollTrigger.update);
+    const unsubscribe = instance.on('scroll', ScrollTrigger.update);
 
-    rafRef.current = (time) => instance.raf(time * 1000);
-    gsap.ticker.add(rafRef.current);
-    gsap.ticker.lagSmoothing(0);
+    // One shared animation loop; a real clock avoids changing global GSAP
+    // lag-smoothing settings for every animation elsewhere in the application.
+    const tick = () => instance.raf(performance.now());
+    gsap.ticker.add(tick);
 
     setLenis(instance);
 
     return () => {
-      gsap.ticker.remove(rafRef.current);
+      gsap.ticker.remove(tick);
+      unsubscribe();
       instance.destroy();
       setLenis(null);
     };
-  }, []);
+  }, [desktop, reduced]);
 
   return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;
 }
@@ -50,10 +56,14 @@ export default function SmoothScroll({ children }) {
 /** Helper de navegação suave usado por âncoras e CTAs. */
 export function useScrollTo() {
   const lenis = useLenis();
-  return (target, options = {}) => {
+  const reduced = useReducedMotion();
+  return useCallback((target, options = {}) => {
     const el = typeof target === 'string' ? document.querySelector(target) : target;
     if (!el) return;
-    if (lenis) lenis.scrollTo(el, { offset: 0, duration: 1.4, ...options });
-    else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+    if (lenis && !reduced) lenis.scrollTo(el, { offset: 0, duration: 1.1, ...options });
+    else window.scrollTo({
+      top: window.scrollY + el.getBoundingClientRect().top + (options.offset ?? 0),
+      behavior: reduced || options.immediate ? 'instant' : 'smooth',
+    });
+  }, [lenis, reduced]);
 }

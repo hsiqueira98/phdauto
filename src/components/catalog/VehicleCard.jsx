@@ -32,7 +32,7 @@ export default function VehicleCard({ vehicle, index, view = 'gallery' }) {
           {vehicle.featured && !reservado && (
             <span className="vcard__selo vcard__selo--escolha meta">
               <span className="vcard__selo-ponto" aria-hidden="true" />
-              Escolha PHD
+              Escolha POLLY
             </span>
           )}
         </div>

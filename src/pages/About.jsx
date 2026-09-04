@@ -1,27 +1,26 @@
-import Timeline from '@/components/home/Timeline';
 import Showroom from '@/components/home/Showroom';
-import { Counter, Reveal } from '@/components/ui/atoms';
+import { Reveal } from '@/components/ui/atoms';
 
 const PRINCIPLES = [
   {
     n: '01',
-    title: 'Nem todo carro entra.',
-    body: 'A seleção é o produto. Um carro que a gente não colocaria na garagem de casa não vai para o pátio.',
+    title: 'Comece pelo seu momento.',
+    body: 'Rotina, espaço, estilo e vontade de dirigir. A escolha começa no que faz sentido para você.',
   },
   {
     n: '02',
-    title: 'O laudo vem antes da foto.',
-    body: 'Procedência, histórico e cautelar resolvidos antes de o veículo ser anunciado — não depois da pergunta.',
+    title: 'Olhe além da fotografia.',
+    body: 'Conheça a versão, os equipamentos e os detalhes de cada veículo. Histórico e condições merecem uma conversa clara antes da decisão.',
   },
   {
     n: '03',
-    title: 'Todas as máquinas, a mesma luz.',
-    body: 'Mesmo local, mesmo ângulo, mesmo tratamento. É o que transforma um estoque numa coleção.',
+    title: 'Encontre seu jeito de dirigir.',
+    body: 'Explore por perfil, compare as possibilidades e refine sua busca. O carro certo precisa combinar com a vida que você leva.',
   },
   {
     n: '04',
-    title: 'O preço fica na tela.',
-    body: 'Sem "consulte-nos". Se está publicado, está valendo — e a simulação de parcela vem junto.',
+    title: 'Decida com clareza.',
+    body: 'Valores, informações e próximos passos no mesmo lugar. Nossa proposta é dar espaço para uma escolha bem pensada.',
   },
 ];
 
@@ -32,42 +31,43 @@ export default function About() {
         <div className="shell">
           <div className="section-index meta">
             <span className="section-index__num">01</span>
-            <span>A casa</span>
+            <span>Conheça a POLLY</span>
           </div>
           <Reveal>
             <h1 className="page__title t-display">
-              Trinta anos
+              Uma nova marca.
               <br />
-              escolhendo
+              Novas direções.
               <br />
-              carros.
+              Seu próximo carro.
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="page__lead">
-              Tempo de mercado é o único ativo que não se compra. A PHD começou em 1996,
-              em Brasília, e continua fazendo a mesma coisa: escolher bem antes de vender.
+              A POLLY VEÍCULOS nasce com uma proposta: tornar a escolha do próximo
+              carro uma experiência mais próxima, clara e inspiradora. Um novo nome
+              para acompanhar os caminhos que você quer descobrir.
             </p>
           </Reveal>
 
           <div className="page__stats">
             <Reveal className="page__stat" delay={0.15}>
               <span className="page__stat-valor num">
-                <Counter to={1996} format={(n) => Math.round(n)} />
+                01
               </span>
-              <span className="meta">Ano de fundação</span>
+              <span className="meta">Explore as possibilidades</span>
             </Reveal>
             <Reveal className="page__stat" delay={0.2}>
               <span className="page__stat-valor num">
-                <Counter to={30} />
+                02
               </span>
-              <span className="meta">Anos de operação</span>
+              <span className="meta">Conheça os detalhes</span>
             </Reveal>
             <Reveal className="page__stat" delay={0.25}>
               <span className="page__stat-valor num">
-                <Counter to={24} />
+                03
               </span>
-              <span className="meta">Máquinas na coleção</span>
+              <span className="meta">Escolha sua direção</span>
             </Reveal>
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function About() {
         <div className="shell">
           <div className="section-index meta">
             <span className="section-index__num">02</span>
-            <span>Critério</span>
+            <span>O que orienta a escolha</span>
           </div>
 
           <ol className="principles__list">
@@ -92,7 +92,6 @@ export default function About() {
         </div>
       </section>
 
-      <Timeline />
       <Showroom />
     </main>
   );

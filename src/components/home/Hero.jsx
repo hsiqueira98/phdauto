@@ -1,142 +1,41 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { Link } from 'react-router-dom';
-import { gsap, prefersReducedMotion } from '@/lib/gsap';
-import { createClipPathReveal } from '@/lib/animations';
-import Foto from '@/components/ui/Foto';
-import { SplitLetters } from '@/components/ui/SplitText';
-import { ScrollCue } from '@/components/ui/atoms';
+import { gsap } from '@/lib/gsap';
+import { vehicles } from '@/data/vehicles';
 import MagneticButton from '@/components/animations/MagneticButton';
 
-/**
- * ABERTURA
- *
- * A capa é uma imagem de atmosfera — não é um veículo do estoque.
- * Ela existe para prender o olhar, não para vender aquele carro.
- *
- * O texto ocupa uma coluna estreita à esquerda e a máquina fica
- * enquadrada à direita: nada de tipografia por cima da lataria.
- */
 export default function Hero({ onAbrirModoImersivo }) {
-  const raiz = useRef(null);
+  const root = useRef(null);
+  useGSAP(() => {
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.timeline({ defaults: { ease: 'power3.out', duration: .85 } })
+        .from('.polly-hero__line > span', { yPercent: 105, stagger: .1 })
+        .from('.polly-hero__intro, .polly-hero__actions', { y: 20, opacity: 0, stagger: .1 }, .3)
+        .from('.polly-hero__image', { scale: 1.05, opacity: 0, duration: 1.2 }, 0);
+    });
+    media.add('(min-width: 1000px) and (prefers-reduced-motion: no-preference)', () => {
+      gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: .5 } })
+        .to('.polly-hero__media', { yPercent: 12, ease: 'none' }, 0)
+        .to('.polly-hero__copy', { y: -55, opacity: .25, ease: 'none' }, 0);
+    });
+    return () => media.revert();
+  }, { scope: root });
 
-  useGSAP(
-    () => {
-      const reduzido = prefersReducedMotion();
-
-      if (reduzido) {
-        gsap.set('.hero__midia', { clipPath: 'inset(0 0 0 0)' });
-        return;
-      }
-
-      const entrada = gsap.timeline({ defaults: { ease: 'expo.out' }, delay: 0.1 });
-
-      entrada.add(
-        createClipPathReveal('.hero__midia', {
-          direction: 'left',
-          duration: 1.5,
-          ease: 'power4.inOut',
-        }),
-        0,
-      );
-
-      entrada
-        .from('.hero__selo', { y: 16, opacity: 0, duration: 1 }, 0.45)
-        .from(
-          '.hero__titulo .split-letters__letter',
-          { yPercent: 115, opacity: 0, duration: 1.1, stagger: 0.022 },
-          0.55,
-        )
-        .from('.hero__lead', { y: 20, opacity: 0, duration: 1 }, 1.05)
-        .from('.hero__acoes > *', { y: 18, opacity: 0, duration: 0.9, stagger: 0.08 }, 1.15)
-        .from('.hero__rodape > *', { y: 16, opacity: 0, duration: 0.9, stagger: 0.08 }, 1.25);
-
-      gsap.to('.hero__brilho', {
-        xPercent: 18,
-        yPercent: -10,
-        scale: 1.15,
-        duration: 14,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      });
-
-      gsap.to('.hero__midia', {
-        yPercent: 10,
-        scale: 1.06,
-        ease: 'none',
-        scrollTrigger: { trigger: raiz.current, start: 'top top', end: 'bottom top', scrub: true },
-      });
-
-      gsap.to('.hero__conteudo', {
-        yPercent: -14,
-        opacity: 0.2,
-        ease: 'none',
-        scrollTrigger: { trigger: raiz.current, start: 'top top', end: 'bottom top', scrub: true },
-      });
-    },
-    { scope: raiz },
-  );
-
-  return (
-    <section className="hero" ref={raiz}>
-      <div className="hero__midia">
-        <Foto
-          src="/imagens/capa/capa-home.jpg"
-          alt=""
-          proporcao="auto"
-          veu="capa"
-          prioridade
-          posicao="72% 58%"
-          className="hero__foto"
-        />
-      </div>
-
-      <span className="hero__brilho" aria-hidden="true" />
-
-      <div className="hero__conteudo">
-        <div className="hero__coluna">
-          <p className="hero__selo meta">
-            PHD Automóveis <span aria-hidden="true">·</span> Brasília{' '}
-            <span aria-hidden="true">·</span> desde 1996
-          </p>
-
-          <SplitLetters
-            as="h1"
-            className="hero__titulo t-display"
-            lines={['Escolha o que', 'vai te mover.']}
-          />
-
-          <p className="hero__lead t-lead">
-            Seu próximo carro não começa em uma busca. Começa em uma sensação.
-          </p>
-
-          <div className="hero__acoes">
-            <MagneticButton
-              as={Link}
-              to="/colecao"
-              className="btn btn--paper btn--lg"
-              data-cursor="Abrir"
-            >
-              Ver a coleção
-            </MagneticButton>
-            <MagneticButton
-              type="button"
-              className="btn btn--ghost btn--lg"
-              onClick={onAbrirModoImersivo}
-            >
-              Modo imersivo
-            </MagneticButton>
-          </div>
-        </div>
-      </div>
-
-      <div className="hero__rodape">
-        <p className="hero__resumo meta">
-          24 máquinas selecionadas <span aria-hidden="true">·</span> SIA Trecho 3
-        </p>
-        <ScrollCue label="Role para explorar" />
-      </div>
-    </section>
-  );
+  return <section className="polly-hero" ref={root} aria-labelledby="polly-hero-title">
+    <div className="polly-hero__media" aria-hidden="true"><img className="polly-hero__image" src="/imagens/capa/capa-home.jpg" alt="" fetchPriority="high" decoding="async" /></div>
+    <div className="polly-hero__copy">
+      <p className="polly-kicker"><span /> UM NOVO NOME. NOVOS CAMINHOS.</p>
+      <h1 id="polly-hero-title" className="polly-hero__title" aria-label="Seu próximo capítulo começa ao volante.">
+        <span className="polly-hero__line" aria-hidden="true"><span>Seu próximo</span></span>
+        <span className="polly-hero__line" aria-hidden="true"><span>capítulo<span className="red-dot">.</span></span></span>
+        <span className="polly-hero__subtitle" aria-hidden="true">Começa ao volante.</span>
+      </h1>
+      <p className="polly-hero__intro">Prazer, POLLY. Carros que combinam com a sua vida.<br className="desktop-break" /> Uma nova forma de encontrar o seu próximo destino.</p>
+      <div className="polly-hero__actions"><MagneticButton as={Link} to="/colecao" className="btn btn--accent btn--lg">Explorar coleção <span aria-hidden="true">↗</span></MagneticButton><button type="button" className="polly-play" onClick={onAbrirModoImersivo}><span aria-hidden="true">▷</span> Entrar no Drive Mode</button></div>
+    </div>
+    <div className="polly-hero__edition" aria-hidden="true"><span>THE DRIVE GALLERY</span><b>01 / POLLY</b></div>
+    <div className="polly-hero__bottom"><span><b>{String(vehicles.length).padStart(2, '0')}</b> veículos na coleção</span><span className="polly-hero__image-note">Fotografia de inspiração</span><a href="#manifesto">O próximo movimento é seu <span aria-hidden="true">↓</span></a></div>
+  </section>;
 }

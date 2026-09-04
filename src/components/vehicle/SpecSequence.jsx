@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
-import { gsap, prefersReducedMotion } from '@/lib/gsap';
+import { gsap } from '@/lib/gsap';
+import { useMediaQuery, useReducedMotion } from '@/lib/hooks';
 import { createCountUp } from '@/lib/animations';
 import { FotoVeiculo } from '@/components/ui/Foto';
 
@@ -24,11 +25,13 @@ function separar(etapa) {
 
 export default function SpecSequence({ vehicle }) {
   const raiz = useRef(null);
+  const reduced = useReducedMotion();
+  const compact = useMediaQuery('(max-width: 1100px), (max-height: 600px), (pointer: coarse)');
   const etapas = [...vehicle.highlights, String(vehicle.year)].map(separar);
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) {
+      if (reduced || compact) {
         gsap.set('.specseq__step', { autoAlpha: 1, position: 'relative' });
         gsap.set('.specseq__divisor', { clipPath: 'inset(0 0 0 0)' });
         gsap.utils.toArray('.specseq__numero').forEach((el) => {
@@ -92,7 +95,7 @@ export default function SpecSequence({ vehicle }) {
         tl.to('.specseq__progresso-fill', { scaleX: (i + 1) / etapas.length, duration: 0.4 }, i);
       });
     },
-    { scope: raiz, dependencies: [vehicle.slug] },
+    { scope: raiz, dependencies: [vehicle.slug, reduced, compact], revertOnUpdate: true },
   );
 
   return (
@@ -110,7 +113,7 @@ export default function SpecSequence({ vehicle }) {
         {etapas.map((etapa, i) => (
           <span className="specseq__step" data-step={i} key={etapa.texto}>
             <span className="specseq__valor t-display">
-              {etapa.numero !== null ? (
+              {compact || reduced ? etapa.texto : etapa.numero !== null ? (
                 <>
                   <span className="specseq__numero num" data-valor={etapa.numero}>
                     {etapa.numero}

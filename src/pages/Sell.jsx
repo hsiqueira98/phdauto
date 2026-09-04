@@ -12,18 +12,18 @@ export default function Sell() {
           </div>
           <Reveal>
             <h1 className="page__title t-display">
-              A gente compra
+              Seu próximo caminho
               <br />
-              com o mesmo critério
+              pode começar
               <br />
-              que vende.
+              com o seu carro.
             </h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="page__lead">
-              Trinta anos avaliando seminovos em Brasília criaram um filtro. É por isso
-              que nem todo carro entra na coleção — e é por isso que o seu vale a
-              avaliação certa, não um chute pela tabela.
+              Conte o que faz do seu carro uma boa escolha. Marca, modelo, estado
+              de conservação e detalhes ajudam a começar a conversa sobre venda
+              ou troca com a POLLY VEÍCULOS.
             </p>
           </Reveal>
         </div>

@@ -4,8 +4,8 @@ Imagens de **placeholder** para o protótipo de apresentação, obtidas do
 Wikimedia Commons. Cada arquivo mantém a licença de origem — a maioria é
 Creative Commons, com exigência de atribuição.
 
-> Na produção, estas fotos dão lugar ao acervo próprio da PHD, fotografado
-> no showroom seguindo o PHD Photo Standard. Este arquivo existe para que
+> Na produção, estas fotos dão lugar ao acervo próprio da POLLY, fotografado
+> no showroom seguindo o POLLY Photo Standard. Este arquivo existe para que
 > nada seja publicado sem o crédito devido enquanto isso não acontece.
 
 `capa/capa-home.jpg` é imagem de atmosfera da home — não representa um

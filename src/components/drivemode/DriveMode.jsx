@@ -1,15 +1,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { useGSAP } from '@gsap/react';
-import { gsap, Observer, prefersReducedMotion } from '@/lib/gsap';
-import { createColorShift } from '@/lib/animations';
+import { gsap, Observer } from '@/lib/gsap';
 import { vehicles } from '@/data/vehicles';
 import { formatPrice, pad2 } from '@/lib/format';
 import { bodyLabels, getUniverse } from '@/data/taxonomy';
 import { FotoVeiculo } from '@/components/ui/Foto';
-import { useKeyDown, useLockBodyScroll } from '@/lib/hooks';
+import { useKeyDown, useLockBodyScroll, useMediaQuery, useReducedMotion } from '@/lib/hooks';
 import { blip, startAmbient, stopAmbient } from '@/lib/driveAudio';
+
+function DriveModePanel({ children, panelRef, reduced }) {
+  const present = useIsPresent();
+  return (
+    <motion.div
+      className="mi"
+      ref={panelRef}
+      initial={reduced ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: reduced ? 0 : 0.5, ease: [0.76, 0, 0.24, 1] }}
+      role={present ? 'dialog' : undefined}
+      aria-modal={present ? true : undefined}
+      aria-label="Modo imersivo — exploração da coleção"
+      aria-hidden={!present || undefined}
+      inert={!present || undefined}
+      tabIndex={-1}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 /**
  * MODO IMERSIVO
@@ -28,24 +49,85 @@ export default function DriveMode({ open, onClose }) {
   const [som, setSom] = useState(false);
   const raiz = useRef(null);
   const travado = useRef(false);
+  const unlockTimer = useRef(null);
+  const reduced = useReducedMotion();
+  const touch = useMediaQuery('(pointer: coarse)');
 
   const lista = vehicles.filter((v) => v.status !== 'reservado');
   const veiculo = lista[indice];
 
   useLockBodyScroll(open);
 
+  useEffect(() => {
+    const panel = raiz.current;
+    if (!open || !panel) return undefined;
+
+    const returnFocus = document.activeElement;
+    const outside = [];
+    for (let branch = panel; branch?.parentElement; branch = branch.parentElement) {
+      for (const sibling of branch.parentElement.children) {
+        if (sibling === branch) continue;
+        outside.push([sibling, sibling.getAttribute('inert')]);
+        sibling.setAttribute('inert', '');
+      }
+      if (branch.parentElement === document.body) break;
+    }
+
+    const controls = () => [...panel.querySelectorAll(
+      'button, a[href], input:not([type="hidden"]), select, textarea, [tabindex]',
+    )].filter((element) => {
+      const style = getComputedStyle(element);
+      return !element.disabled && element.tabIndex >= 0
+        && !element.closest('[hidden], [inert], [aria-hidden="true"]')
+        && style.display !== 'none' && style.visibility !== 'hidden';
+    });
+    const focusClose = () => (panel.querySelector('.mi__sair') ?? panel).focus({ preventScroll: true });
+    focusClose();
+
+    const onTab = (event) => {
+      if (event.key !== 'Tab') return;
+      const focusable = controls();
+      const first = focusable[0] ?? panel;
+      const last = focusable.at(-1) ?? panel;
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === panel || !panel.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || active === panel || !panel.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    const onFocusIn = (event) => {
+      if (!panel.contains(event.target)) focusClose();
+    };
+    document.addEventListener('keydown', onTab);
+    document.addEventListener('focusin', onFocusIn);
+
+    return () => {
+      document.removeEventListener('keydown', onTab);
+      document.removeEventListener('focusin', onFocusIn);
+      outside.forEach(([element, previous]) => {
+        if (previous === null) element.removeAttribute('inert');
+        else element.setAttribute('inert', previous);
+      });
+      if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+    };
+  }, [open]);
+
   const mover = useCallback(
     (passo) => {
-      if (travado.current) return;
+      if (!open || travado.current) return;
       travado.current = true;
       setDirecao(passo);
       setIndice((i) => (i + passo + lista.length) % lista.length);
-      blip(passo > 0 ? 392 : 330);
-      setTimeout(() => {
+      if (som) blip(passo > 0 ? 392 : 330);
+      unlockTimer.current = setTimeout(() => {
         travado.current = false;
-      }, 420);
+        unlockTimer.current = null;
+      }, reduced ? 160 : 420);
     },
-    [lista.length],
+    [lista.length, open, reduced, som],
   );
 
   useKeyDown('Escape', onClose, open);
@@ -60,6 +142,8 @@ export default function DriveMode({ open, onClose }) {
       target: raiz.current,
       type: 'wheel,touch,pointer',
       preventDefault: true,
+      allowClicks: true,
+      ignore: raiz.current.querySelectorAll('button, a, input'),
       tolerance: 24,
       wheelSpeed: -1,
       onUp: () => mover(1),
@@ -83,12 +167,17 @@ export default function DriveMode({ open, onClose }) {
 
   useEffect(() => {
     if (!open) setSom(false);
+    return () => {
+      clearTimeout(unlockTimer.current);
+      unlockTimer.current = null;
+      travado.current = false;
+    };
   }, [open]);
 
   /* Transição entre máquinas */
   useGSAP(
     () => {
-      if (!open || prefersReducedMotion()) return;
+      if (!open || reduced) return;
 
       gsap
         .timeline({ defaults: { ease: 'expo.out' } })
@@ -100,44 +189,23 @@ export default function DriveMode({ open, onClose }) {
           0,
         )
         .from('.mi__foto', { xPercent: 8 * direcao, opacity: 0, scale: 1.04, duration: 1.1 }, 0)
+        .fromTo('.mi__tinta', { opacity: 0 }, { opacity: 1, duration: 0.9 }, 0)
         .from('.mi__nome-interno', { yPercent: 110, duration: 0.9, stagger: 0.06 }, 0.12)
         .from('.mi__item', { y: 18, opacity: 0, duration: 0.7, stagger: 0.05 }, 0.26)
         .from('.mi__preco', { y: 16, opacity: 0, duration: 0.7 }, 0.34)
         // Índice datilografado, dígito a dígito
         .from('.mi__digito', { opacity: 0, duration: 0.14, stagger: 0.09, ease: 'none' }, 0.2);
     },
-    { scope: raiz, dependencies: [indice, open], revertOnUpdate: true },
+    { scope: raiz, dependencies: [indice, open, reduced], revertOnUpdate: true },
   );
 
-  /* Tinta ambiente que muda devagar.
-     A troca acontece no véu, não num filtro sobre a fotografia:
-     animar hue-rotate numa imagem em tela cheia repinta cada quadro. */
-  useGSAP(
-    () => {
-      if (!open || prefersReducedMotion()) return;
-      createColorShift(
-        '.mi__tinta',
-        ['rgba(220,38,38,0.10)', 'rgba(79,70,229,0.08)', 'rgba(139,144,153,0.07)'],
-        { duration: 7, property: 'backgroundColor' },
-      );
-    },
-    { scope: raiz, dependencies: [open] },
-  );
+  // The POLLY red veil is static after its entrance: no continuous repaint
+  // and no proxy animation left targeting a discarded vehicle stage.
 
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
-          className="mi"
-          ref={raiz}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Modo imersivo — exploração da coleção"
-        >
+        <DriveModePanel panelRef={raiz} reduced={reduced}>
           <div className="mi__palco" key={veiculo.id}>
             <span className="mi__tinta" aria-hidden="true" />
             <span className="mi__cortina" aria-hidden="true" />
@@ -154,7 +222,7 @@ export default function DriveMode({ open, onClose }) {
           {/* Barra mínima */}
           <div className="mi__barra">
             <span className="mi__marca meta">
-              PHD <em>Modo imersivo</em>
+              POLLY <em>Modo imersivo</em>
             </span>
 
             <div className="mi__barra-direita">
@@ -217,22 +285,24 @@ export default function DriveMode({ open, onClose }) {
               <em aria-hidden="true">/ {pad2(lista.length)}</em>
             </span>
 
-            <ol className="mi__trilho">
-              {lista.map((v, i) => (
-                <li key={v.id}>
-                  <button
-                    type="button"
-                    className={`mi__marca-trilho ${i === indice ? 'is-ativa' : ''}`}
-                    onClick={() => {
-                      setDirecao(i > indice ? 1 : -1);
-                      setIndice(i);
-                    }}
-                    aria-label={`${v.brand} ${v.model}`}
-                    aria-current={i === indice}
-                  />
-                </li>
-              ))}
-            </ol>
+            {!touch && (
+              <ol className="mi__trilho">
+                {lista.map((v, i) => (
+                  <li key={v.id}>
+                    <button
+                      type="button"
+                      className={`mi__marca-trilho ${i === indice ? 'is-ativa' : ''}`}
+                      onClick={() => {
+                        setDirecao(i > indice ? 1 : -1);
+                        setIndice(i);
+                      }}
+                      aria-label={`${v.brand} ${v.model}`}
+                      aria-current={i === indice}
+                    />
+                  </li>
+                ))}
+              </ol>
+            )}
 
             <div className="mi__nav">
               <button type="button" onClick={() => mover(-1)} aria-label="Anterior">
@@ -248,7 +318,7 @@ export default function DriveMode({ open, onClose }) {
           <span className="mi__etiqueta meta" aria-hidden="true">
             {bodyLabels[veiculo.body]} · {veiculo.year} · {veiculo.color}
           </span>
-        </motion.div>
+        </DriveModePanel>
       )}
     </AnimatePresence>
   );

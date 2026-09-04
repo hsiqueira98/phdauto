@@ -1,7 +1,7 @@
 import manifestoFotos from './fotos.json';
 
 /**
- * ESTOQUE MOCKADO — PHD Automóveis
+ * ESTOQUE MOCKADO — POLLY VEÍCULOS
  *
  * Protótipo de apresentação: nenhum backend. Este arquivo é o contrato
  * de dados que a integração real (ERP/DMS) deve preencher.
@@ -491,7 +491,7 @@ const catalogo = [
     universe: 'adventure',
     headline: 'O Jeep que cabe na vaga do prédio.',
     story:
-      'Formato quadrado, ângulos de ataque honestos e a identidade da marca inteira condensada em 4,25 metros. Sobe meio-fio de Brasília sem pedir desculpa.',
+      'Formato quadrado, ângulos de ataque honestos e a identidade da marca inteira condensada em 4,25 metros. Uma presença própria na cidade e fora dela.',
     highlights: ['1.8 16V', '139 CV', 'AUTOMÁTICO'],
     features: ['Central Uconnect', 'Câmera de ré', 'Rodas 16 polegadas', 'Faróis de neblina', 'Controle de descida'],
     status: 'disponivel',

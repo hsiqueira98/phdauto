@@ -19,7 +19,10 @@ describe('rotas', () => {
   it('home monta com o headline do hero', () => {
     renderAt('/');
     // O h1 é dividido em linhas mascaradas; o nome acessível traz a frase inteira.
-    expect(screen.getByRole('heading', { level: 1, name: /escolha o que vai te mover/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: /seu próximo capítulo começa ao volante/i })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /seu próximo capítulo.*do seu jeito/i })).toBeInTheDocument();
+    expect(document.body).not.toHaveTextContent(/PHD|1996|trinta anos/i);
+    expect(screen.getByRole('link', { name: 'A POLLY' })).toHaveAttribute('href', '/polly');
   });
 
   it('catálogo lista os veículos e os controles de filtro', () => {
@@ -51,7 +54,7 @@ describe('rotas', () => {
   });
 
   it('páginas institucionais montam', () => {
-    ['/vender', '/financiamento', '/phd'].forEach((route) => {
+    ['/vender', '/financiamento', '/polly', '/phd'].forEach((route) => {
       const { unmount } = renderAt(route);
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
       unmount();

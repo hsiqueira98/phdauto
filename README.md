@@ -1,355 +1,172 @@
-# PHD Automóveis — The Drive Gallery
+# POLLY VEÍCULOS — The Drive Gallery
 
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
-![React](https://img.shields.io/badge/React-19.1.1-blue)
-![Vite](https://img.shields.io/badge/Vite-7.1.3-purple)
-![GSAP](https://img.shields.io/badge/GSAP-3.13.0-green)
-![License](https://img.shields.io/badge/License-Proprietário-red)
+Protótipo navegável em React para apresentação comercial da POLLY VEÍCULOS.
+O conceito combina fotografia automotiva, direção editorial e animação de
+rolagem para apresentar uma nova marca e facilitar a exploração da coleção.
 
-Um catálogo visual e cinematográfico de veículos seminovos da **PHD Automóveis** — Brasília, desde 1996.
-
-Uma nova forma de explorar e adquirir automóveis. Em vez de uma simples galeria de classificados, oferecemos uma experiência cinematográfica onde cada carro é apresentado como uma história. A navegação é fluida, as animações contam a narrativa, e o design premium comunica confiança.
-
----
+A POLLY é apresentada como uma nova empresa. O conteúdo não atribui a ela
+datas de fundação, tempo de mercado, contatos ou instalações de outra marca.
 
 ## Rodar localmente
 
-```bash
+O projeto permanece em `D:\phdautomoveis`, conforme solicitado. O nome da
+pasta foi preservado para não alterar atalhos nem a localização de trabalho.
+
+```powershell
+cd D:\phdautomoveis
 npm install
-npm run dev        # http://localhost:5173
+npm run dev
 ```
 
-| Comando | O que faz |
+Abra o endereço exibido pelo Vite, normalmente `http://localhost:5173`.
+
+| Comando | Função |
 | --- | --- |
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção em `dist/` |
+| `npm run dev` | Servidor local com atualização automática |
+| `npm run build` | Gera a versão de apresentação em `dist/` |
 | `npm run preview` | Serve o build em `http://localhost:4173` |
-| `npm test` | Testes de lógica e de renderização |
-| `npm run fotos` | Rebaixa o acervo de fotografias (veja abaixo) |
+| `npm test` | Executa os testes existentes |
+| `npm run fotos` | Atualiza o acervo de referência via Wikimedia Commons |
 
----
+## Direção de marca
 
-## A tese
+POLLY VEÍCULOS é a marca principal; The Drive Gallery descreve a experiência
+editorial. A identidade usa grafite, tons de prata e vermelho inspirados na
+referência fornecida. O conteúdo troca a antiga retrospectiva por uma
+apresentação dos critérios que orientam a escolha do próximo carro.
 
-Não é o redesenho de uma concessionária. É a PHD tratada como **marca automotiva
-que por acaso vende seminovos**.
+A fotografia abre a experiência. A informação vem em seguida, com catálogo,
+filtros e páginas de veículo para quem quer comparar detalhes. O modo imersivo
+oferece outro ritmo de exploração, sem impedir acesso direto à coleção.
 
-Isso muda a referência de projeto: em vez de Webmotors, Kavak e lojas locais, o
-vocabulário vem de Porsche, Polestar, Cupra e de editoriais impressos. A inovação
-está em **como o estoque é apresentado e desejado** — as animações são consequência
-disso, não o produto.
+Os cinco universos editoriais são Performance, Urbano, Aventura, Executivo e
+Primeiro carro. As categorias tradicionais continuam nos dados e nos filtros.
 
-Três decisões sustentam o conceito:
-
-1. **Inversão da ordem.** Emoção → informação → conversão. Quase todo site
-   automotivo começa pela ficha técnica; aqui ela vem depois da apresentação.
-2. **Camada editorial sobre o estoque.** Hatch, sedã, SUV e picape continuam
-   existindo nos dados. Por cima deles, cinco universos: Performance, Urbano,
-   Aventura, Executivo e Primeiro carro.
-3. **Dois caminhos declarados.** Quem quer comprar rápido usa o catálogo com
-   filtros. Quem quer explorar usa o modo imersivo. Criatividade não custa conversão.
-
----
-
-## Direção tipográfica
-
-O ponto de partida desta versão foi corrigir o que travava a leitura: caixa-alta
-condensada, entrelinha abaixo de 1 e corpos gigantescos empilhavam as palavras.
-
-| Antes | Agora |
-| --- | --- |
-| Anton, caixa-alta, `line-height: 0.84` | Archivo, caixa normal, `line-height: 1.08–1.16` |
-| Maior título com até 17rem | Maior título com **4,5rem** |
-| Tracking negativo forte | `-0.018em`, só o suficiente para dar aprumo |
-| Caixa-alta em títulos e rótulos | Caixa-alta **só** em rótulos, com `0.14em` de espaço |
-
-A hierarquia passou a vir do espaço em volta, não do tamanho da letra. Toda a
-escala está em `src/styles/tokens.css` — mexer lá muda o site inteiro.
-
----
-
-## Fotografia
-
-Todas as fotos são **reais** e ficam em `public/imagens/veiculos/` — 95 arquivos,
-até 4 por veículo.
-
-### De onde vêm
-
-`npm run fotos` roda `scripts/baixar-fotos.mjs`, que busca no **Wikimedia Commons**
-fotografias dos modelos que estão no estoque mockado. Banco de imagem genérico
-mostraria "um SUV qualquer"; numa apresentação para a PHD isso salta aos olhos.
-
-O script faz três filtragens que valem citar, porque sem elas o acervo enche de
-carro errado:
-
-- **Modelo obrigatório no nome do arquivo.** Buscar "Volkswagen Polo" no Commons
-  devolve carro de rallycross; exigir `polo` no nome resolve.
-- **Geração eliminatória.** Um Polo 1991 não representa um Polo 2020. Se o arquivo
-  declara o ano e ele está a mais de 7 anos do alvo, o candidato é descartado.
-  Resultado atual: **zero fotos fora da geração**.
-- **Pontuação por origem.** Fotógrafos automotivos do Commons com enquadramento
-  consistente sobem; importações candid do Flickr descem.
-
-`node scripts/baixar-fotos.mjs --simular` lista o que ele escolheria sem baixar nada.
-
-### O tratamento que unifica
-
-O acervo emprestado vem de fontes diferentes, com luz e fundo diferentes.
-`src/components/ui/Foto.jsx` aplica a mesma graduação em todas — dessaturação leve,
-contraste e véu grafite — e é isso que faz vinte e quatro fotos distintas lerem como
-uma coleção só.
-
-**É também a demonstração do argumento:** quando as fotos forem feitas no showroom,
-no mesmo ângulo e com o mesmo tratamento, o efeito fica muito maior. Esse é o
-**PHD Photo Standard** — mesmo local, mesmo ângulo principal, mesmo crop, mesma cor.
-
-### Trocar pelas fotos da PHD
-
-1. Coloque os arquivos em `public/imagens/veiculos/`.
-2. Aponte-os em `src/data/fotos.json`, na chave `fotoKey` do veículo.
-
-Nada de layout muda. Créditos e licenças de cada arquivo atual estão em
-`public/imagens/CREDITOS.md`.
-
----
-
-## Camada cinematográfica
-
-Segunda passada de design, aplicando `.claude/PROMPT_DO_AGENTE.md`.
-
-### Paleta
-
-A cor proprietária passou de bronze para **vermelho**, conforme o documento.
-Ela vive em três tokens, todos em `src/styles/tokens.css`:
-
-| Token | Valor | Para quê |
-| --- | --- | --- |
-| `--accent` | `#dc2626` | Cor **gráfica**: bordas, brilhos, riscos, preenchimentos |
-| `--accent-text` | `#ef4444` | Todo **texto** pequeno em vermelho |
-| `--accent-solid` | `#b91c1c` | Fundo de botão sólido, com texto em papel |
-
-Por que três e não um: `#dc2626` sobre o grafite dá **4,05:1**, abaixo do
-mínimo 4,5:1 que a checklist do próprio documento exige. Como elemento
-gráfico ele passa (o mínimo ali é 3:1); como texto de 11px, não. Preenchido
-como botão é pior ainda — não alcança 4,5:1 com nenhuma cor de texto, nem
-clara nem escura. A separação mantém o vermelho pedido em toda a superfície
-visível e resolve o contraste onde ele importa.
-
-### Novos arquivos
-
-```
-src/styles/animations.css      @keyframes centralizadas
-src/styles/effects.css         glow, shimmer, glass, ruído, malha
-src/lib/animations.js          utilitários GSAP reutilizáveis
-src/components/layout/ScrollProgress.jsx
-src/components/animations/MagneticButton.jsx
-```
-
-Cascata em `main.css`: tokens → base → effects → animations → components → seções → páginas.
-
-### O que mudou em cada seção
-
-| Seção | Antes | Agora |
-| --- | --- | --- |
-| **Abertura** | Parallax discreto | Imagem entra por máscara (clip-path), letras sobem uma a uma, brilho vermelho deriva atrás, CTAs magnéticos |
-| **Manifesto** | Pin travando a rolagem | **Sem pin.** Três frases em sequência, risco vermelho crescendo, contadores GSAP, brilho ao fundo |
-| **A coleção** | Escala e opacidade | Perspectiva 3D (`rotationY`), depth fade — o que está longe do centro desfoca e perde sombra |
-| **Catálogo** | Cartões estáticos | Brilho na borda no hover, varredura de luz, ponto pulsante no selo, rodapé que troca universo por chamada |
-| **Veículo** | Specs aparecendo | Números contando, divisor entrando por máscara |
-| **Modo imersivo** | Corte seco | Cortina preta entre planos, tinta ambiente derivando, índice datilografado dígito a dígito |
-| **Cabeçalho** | Estático | Marca com risco no hover, busca que expande e revela o rótulo |
-
-### Três decisões que fogem da letra do documento
-
-Todas para **cumprir a checklist da Parte 7**, que o texto literal violaria:
-
-1. **Pulso do selo no ponto, não no cartão.** O documento pede
-   `animation: glow-border` e `pulse-glow` permanentes em `.vcard`. Animar
-   `box-shadow` em 24 cartões ao mesmo tempo repinta a grade inteira a cada
-   quadro. O brilho virou estado de hover; o pulso ficou num ponto de 5px,
-   que é composição pura.
-
-2. **Tinta em vez de filtro no modo imersivo.** `hue-rotate` sobre uma
-   fotografia em tela cheia repinta a cada quadro. A cor deriva numa camada
-   de véu por cima — mesma leitura, custo zero.
-
-3. **`scaleX` em vez de `width` na barra de progresso**, e um pseudo fixo em
-   vez de `background-attachment: fixed` na malha. Ambos evitam layout e
-   repaint por quadro de rolagem.
-
-Duas funções do documento também tinham API incorreta e foram implementadas
-funcionando: `createColorShift` (usava `gsap.interpolate` como modifier;
-o correto é `gsap.utils.interpolate`) e `createDistortionWave`.
-
-### Medições
-
-Feitas no navegador, com o build de produção:
-
-| Critério da checklist | Exigido | Medido |
-| --- | --- | --- |
-| FPS na faixa horizontal | > 55 | **60** |
-| Contraste de texto | ≥ 4,5:1 | **nenhuma falha** |
-| Erros de console | 0 | **0** |
-| `prefers-reduced-motion` | tudo legível | palavras em opacidade 1, contadores no valor final, máscaras abertas |
-
-O ajuste de contraste também subiu `--fg-faint` de `#61666e` para `#888d95`:
-o tom antigo dava 3,39:1 e reprovava em todas as superfícies.
-
----
-
-## Ajustes da terceira rodada
-
-Feitos a partir da revisão tela a tela.
-
-| Seção | Problema apontado | O que mudou |
-| --- | --- | --- |
-| **Abertura** | Texto tapava o carro; havia um veículo do estoque em destaque | Capa fixa de atmosfera (**não é do estoque**), coluna de texto estreita à esquerda e véu que escurece só a faixa do texto. O bloco "Em destaque" saiu |
-| **Manifesto** | Texto todo à esquerda, fundo preto parado | Duas colunas: frases à esquerda, instrumento animado + números à direita. Fundo com linhas diagonais derivando |
-| **Universos** | A prévia seguia o cursor e cobria a leitura | Painel fixo na coluna da direita. A linha ativa é marcada por um risco vermelho, sem apagar as outras |
-| **A coleção** | Carrossel fora do centro, cortando preço e ficha | Recuo lateral calculado (`(100vw − largura do cartão) / 2`): o cartão em foco para no centro. Altura travada na viewport, com a foto cedendo espaço para a ficha |
-| **Modo imersivo** | Foto em tela cheia atrás do texto | Fotografia virou peça emoldurada à direita, com máscara de entrada e parallax próprio |
-| **Encontrar meu carro** | Não parecia um campo | Caixa com fundo, borda e brilho no foco, rótulo visível e cursor piscando enquanto está vazio |
-| **Vender meu carro** | Card estático no canto | Card flutuante que inclina seguindo o ponteiro, fixo na altura da tela enquanto se lê os passos |
-| **A casa PHD** | Nada à direita | Ano em contorno, contador de anos de estrada e barra de progresso dos 30 anos |
-| **Showroom** | SVG decorativo no lugar de um mapa | **Mapa real**, interativo, com as coordenadas geocodificadas do endereço |
-| **Rodapé** | — | Mantido |
-
-### O mapa
-
-`src/components/home/Showroom.jsx` embute o OpenStreetMap: é o único mapa
-interativo que roda **sem chave de API**, então o protótipo abre na máquina de
-qualquer pessoa sem cadastro em lugar nenhum. Trocar pelo provedor que a PHD
-preferir é mudar a URL do iframe.
-
-As coordenadas (`-15,8027 / -47,9535`) vieram da geocodificação do endereço no
-Nominatim e batem com o CEP 71200-030 que já estava no site. Uma camada de tinta
-grafite por cima alinha o mapa claro ao resto da página, sem bloquear o ponteiro —
-ele continua arrastável e com zoom.
-
-### A capa
-
-`public/imagens/capa/capa-home.jpg` é imagem de atmosfera, **não** um veículo à
-venda. Está separada do acervo do estoque justamente para deixar isso explícito
-no código e no arquivo de créditos.
-
----
-
-## Arquitetura de animação
-
-Duas engines, dois territórios, zero disputa de responsabilidade.
-
-| Engine | Território |
-| --- | --- |
-| **GSAP** + ScrollTrigger + Observer | Pin, scrub, rolagem horizontal, parallax, sequência da página de produto, gesto do modo imersivo |
-| **Motion** (motion.dev) | Microinteração de UI: cartões, menus, filtros, chips, modais, feedback |
-| **Lenis** | Rolagem suave, sincronizada com o ScrollTrigger |
-
-**Anime.js foi descartado de propósito.** GSAP e Motion já cobrem tudo, e uma
-terceira engine só criaria disputa por responsabilidade.
-
-Todo movimento respeita `prefers-reduced-motion`: seções pinadas viram blocos
-estáticos, a rolagem horizontal vira carrossel nativo com scroll-snap e nenhuma
-informação depende de animação para existir.
-
----
-
-## Estrutura
-
-```
-src/
-├─ components/
-│  ├─ ui/            Foto (PHD Photo Standard), SplitText, atoms (Motion)
-│  ├─ layout/        Header, Footer, Cursor, Preloader, SmoothScroll
-│  ├─ home/          As 10 seções da home, uma por arquivo
-│  ├─ catalog/       FilterPanel, RangeSlider, VehicleCard
-│  ├─ vehicle/       SpecSequence (a sequência pinada)
-│  └─ drivemode/     DriveMode (modo imersivo, tela cheia)
-├─ data/             vehicles.js (estoque), taxonomy.js, fotos.json (gerado)
-├─ lib/              gsap, filtering, smartSearch, format, hooks, driveAudio
-├─ pages/            Home, Catalog, Vehicle, Sell, Financing, About, NotFound
-├─ styles/           tokens → base → components → layout → seções
-└─ test/             setup e testes de rota
-scripts/
-└─ baixar-fotos.mjs  Monta o acervo de fotografias
-```
-
-### Rotas
+## Rotas
 
 | Rota | Conteúdo |
 | --- | --- |
-| `/` | Abertura → Manifesto → Universos → A coleção → Modo imersivo → Busca → Vender → História → Showroom → Chamada final |
-| `/colecao` | Catálogo completo com todos os filtros |
-| `/veiculo/:slug` | Página de produto |
-| `/vender` · `/financiamento` · `/phd` | Páginas de apoio |
+| `/` | Apresentação visual, coleção e caminhos para explorar a marca |
+| `/colecao` | Catálogo, busca e filtros combináveis |
+| `/veiculo/:slug` | Fotos, ficha técnica, demonstração de interesse e simulação |
+| `/vender` | Apresentação da avaliação de veículo e formulário demonstrativo |
+| `/financiamento` | Simulação ilustrativa de entrada, prazo e parcelas |
+| `/polly` | Apresentação da POLLY e critérios de escolha |
+| `/phd` | Endereço legado, redirecionado para `/polly` |
 
----
+## Estrutura
 
-## Catálogo — os filtros
+```text
+src/
+├─ components/
+│  ├─ ui/            Foto, SplitText e componentes compartilhados
+│  ├─ layout/        Cabeçalho, rodapé, carregamento e rolagem
+│  ├─ home/          Seções independentes da apresentação
+│  ├─ catalog/       Filtros, slider e cartão de veículo
+│  ├─ vehicle/       Sequência visual de especificações
+│  └─ drivemode/     Experiência imersiva
+├─ data/             Estoque mockado, taxonomia e manifesto de fotos
+├─ lib/              Animação, busca, filtros, formatação e áudio
+├─ pages/            Páginas da navegação
+├─ styles/           Tokens e estilos globais, de componentes e páginas
+└─ test/             Configuração e testes
+public/
+└─ imagens/          Fotografias locais e créditos
+scripts/
+└─ baixar-fotos.mjs   Atualização das fotos de referência
+```
 
-A complexidade não sumiu; ela deixou de ser a porta de entrada.
+## Movimento
 
-**Busca em linguagem natural** (`src/lib/smartSearch.js`) traduz frases para o mesmo
-objeto de filtro que os controles manipulam:
+GSAP e ScrollTrigger coordenam as sequências de rolagem, parallax e seções
+pinadas. Motion cuida de menus, filtros, cartões e respostas de interface.
+Lenis integra a rolagem suave ao ciclo do ScrollTrigger. A separação evita
+que duas bibliotecas disputem as mesmas propriedades de um elemento.
 
-| Você digita | Vira |
+As animações são revertidas quando uma rota ou condição responsiva muda.
+Lenis é ativado apenas no desktop com ponteiro preciso, usando o ticker
+compartilhado do GSAP. No celular a rolagem permanece nativa.
+
+A vitrine da home usa uma única timeline para o trilho e a régua de progresso,
+sem desfoque ou sombra animada em cada cartão. O pin só é ativado a partir de
+1000px de largura e 700px de altura, com ponteiro preciso e movimento normal.
+Fora dessas condições, a coleção usa rolagem nativa com controles acessíveis.
+Botões magnéticos reutilizam animações, e as sequências de veículos limpam
+seus efeitos ao mudar de modelo. `prefers-reduced-motion` é observado também
+durante a sessão. A abertura não bloqueia o conteúdo com um carregador artificial.
+
+`NextChapter.jsx` substitui a antiga linha do tempo por três etapas da experiência:
+descobrir, conhecer e escolher. O logo de apresentação em `BrandMark.jsx` é
+uma interpretação vetorial da referência enviada, para uso neste protótipo.
+
+## Fotografias
+
+As imagens dos veículos ficam em `public/imagens/veiculos/`. Elas são fotos
+de referência dos modelos, não das unidades anunciadas. As fichas utilizam
+dados fictícios; a cor da foto pode diferir da cor descrita no exemplo.
+
+`scripts/baixar-fotos.mjs` busca imagens no Wikimedia Commons, exige o modelo
+no nome do arquivo e filtra gerações incompatíveis quando há informação de
+ano. Execute `node scripts/baixar-fotos.mjs --simular` para inspecionar a
+seleção sem baixar arquivos.
+
+Os créditos e licenças de cada fotografia estão em
+`public/imagens/CREDITOS.md` e `public/imagens/creditos.json`. Eles devem
+acompanhar o uso das imagens. Não remova os créditos ao trocar a marca.
+
+Para inserir fotos próprias:
+
+1. Coloque os arquivos em `public/imagens/veiculos/`.
+2. Atualize `src/data/fotos.json` na chave `fotoKey` de cada veículo.
+3. Confira o corte em desktop, celular, catálogo e página de detalhe.
+4. Atualize os créditos conforme a origem e os direitos de cada arquivo.
+
+A foto de atmosfera da capa está separada em
+`public/imagens/capa/capa-home.jpg` e não representa um veículo à venda.
+O tratamento compartilhado é feito por `src/components/ui/Foto.jsx`.
+
+## Catálogo e busca
+
+O estado dos filtros fica na URL, permitindo compartilhar e reabrir uma
+seleção, por exemplo `/colecao?bodies=suv&priceMax=100000`.
+
+| Busca de exemplo | Interpretação |
 | --- | --- |
-| `SUV até 100 mil` | carroceria SUV + preço máx. 100.000 |
-| `automático até 90 mil` | câmbio automático + preço máx. 90.000 |
-| `até 60 mil km` | rodagem máx. 60.000 km (não confunde com dinheiro) |
-| `sedan a partir de 2019` | carroceria sedã + ano mín. 2019 |
-| `entre 80 e 120 mil` | faixa de preço |
-| `vw turbo` | marca Volkswagen + universo Performance |
-| `carro econômico` | até 1.6, sem diesel, até 130 cv |
+| `SUV até 100 mil` | Carroceria SUV e teto de preço |
+| `automático até 90 mil` | Câmbio automático e teto de preço |
+| `até 60 mil km` | Limite de quilometragem |
+| `sedan a partir de 2019` | Carroceria sedã e ano mínimo |
+| `entre 80 e 120 mil` | Faixa de preço |
+| `vw turbo` | Volkswagen e universo Performance |
+| `carro econômico` | Até 1.6, sem diesel, até 130 cv |
 
-**Filtros completos:** universo, faixa de preço, marca, carroceria, câmbio,
-combustível, faixa de ano, quilometragem máxima, cor (com amostras), opcionais e
-perfil econômico. Mais ordenação (curadoria PHD, preço, ano, km) e alternância
-entre galeria e lista.
+Os filtros também incluem marca, combustível, cor, opcionais, câmbio, ano,
+carroceria e universo. A ordenação permite curadoria POLLY, preço, ano e km.
+O catálogo oferece visualização em galeria e lista.
 
-**Toda combinação é um link.** O estado vive na URL — `/colecao?bodies=suv&priceMax=100000`
-é compartilhável, indexável e sobrevive ao refresh.
+## Limites desta apresentação
 
----
+- Estoque, preços, condições e informações dos veículos são mockados.
+- A simulação usa uma taxa fixa ilustrativa. Não consulta crédito nem oferece
+  financiamento real; custos e aprovação dependem de uma proposta real.
+- Formulários e demonstrações de interesse não enviam dados ou mensagens.
+- Telefone, WhatsApp e localização oficiais da POLLY aguardam confirmação;
+  o protótipo não deve encaminhar visitantes para contatos da antiga marca.
+- O som opcional do modo imersivo é sintetizado com Web Audio e começa desligado.
+- Não há backend, CRM, ERP, autenticação ou integração com instituição financeira.
 
-## Direção visual
+Antes de uma publicação comercial, substituir os dados de demonstração pelo
+estoque autorizado, confirmar os canais e instalações da POLLY, revisar textos
+comerciais e conectar os formulários aos serviços aprovados.
 
-Evita deliberadamente o clichê do setor (preto + vermelho + carbono + fonte racing).
+## Acessibilidade e verificação
 
-| Token | Valor | Uso |
-| --- | --- | --- |
-| `--ink-850` | `#0b0c0e` | Grafite profundo, superfície base |
-| `--paper` | `#f4f3f0` | Off-white, texto e superfícies claras |
-| `--steel-200` | `#8b9099` | Cinza metálico, texto secundário |
-| `--accent` | `#c08a5e` | **Placeholder** — trocar pela cor oficial da PHD |
+O projeto inclui link para pular ao conteúdo, controles nativos, indicações de
+foco, navegação por teclado no modo imersivo e anúncios de resultados do
+catálogo. Textos divididos para animação mantêm um nome acessível completo.
 
-O accent é consumido por **um único token** em `src/styles/tokens.css`. Trocar
-aquela linha reveste o site inteiro.
-
-**Tipografia:** Archivo (títulos) + Inter (interface), ambas com stack de fallback —
-o site não quebra sem conexão com o Google Fonts.
-
----
-
-## O que é protótipo
-
-Transparência para a apresentação:
-
-- Estoque, preços e textos são **mockados** — inspirados no perfil real da loja.
-- As fotografias são **do modelo, não da unidade**. A página de veículo diz isso na
-  tela, e a cor registrada na ficha pode não bater com a do carro fotografado.
-- Formulários de avaliação e contato **não enviam nada**.
-- A simulação de financiamento usa taxa fixa ilustrativa, sem consulta a crédito.
-- Endereço, telefone e WhatsApp são **placeholders**.
-- O som ambiente do modo imersivo é sintetizado em Web Audio — nenhum arquivo de
-  áudio no bundle. Começa sempre desligado.
-
----
-
-## Acessibilidade
-
-- Navegação completa por teclado, incluindo o modo imersivo (setas e `ESC`).
-- Link para pular ao conteúdo.
-- Textos divididos para animação mantêm o nome acessível intacto via `aria-label`.
-- Sliders de faixa usam `input[type=range]` reais — operáveis por teclado.
-- `prefers-reduced-motion` desliga todo o movimento sem perder conteúdo.
-- Resultados do catálogo anunciados via `aria-live`.
+Execute o build e os testes antes de entregar uma versão. Confira também as
+rotas em desktop e celular, menus, filtros, fotos, botões, preferência de
+movimento reduzido e navegação de ida e volta. Resultados de desempenho e
+contraste precisam ser medidos na versão atual; medições antigas não
+representam automaticamente este redesign.

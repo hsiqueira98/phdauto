@@ -7,7 +7,7 @@ import { useMediaQuery, useReducedMotion } from '@/lib/hooks';
  * Qualquer elemento com data-cursor="texto" troca o rótulo.
  */
 export default function Cursor() {
-  const fine = useMediaQuery('(hover: hover) and (pointer: fine)');
+  const fine = useMediaQuery('(min-width: 900px) and (hover: hover) and (pointer: fine)');
   const reduced = useReducedMotion();
 
   const x = useMotionValue(-100);
@@ -17,28 +17,60 @@ export default function Cursor() {
 
   const [label, setLabel] = useState('');
   const [active, setActive] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (!fine || reduced) return undefined;
+    let inside = false;
 
     const onMove = (e) => {
+      if (e.pointerType === 'touch') return;
+      if (!inside) {
+        inside = true;
+        setVisible(true);
+      }
       x.set(e.clientX);
       y.set(e.clientY);
+    };
+
+    // Hover metadata changes only when the pointer enters another element,
+    // not on every pixel it travels across the same element.
+    const onOver = (e) => {
+      if (e.pointerType === 'touch') return;
+      inside = true;
+      setVisible(true);
       const target = e.target instanceof Element ? e.target.closest('[data-cursor]') : null;
       const interactive =
         e.target instanceof Element ? e.target.closest('a, button, input, [role="button"]') : null;
       setLabel(target?.getAttribute('data-cursor') ?? '');
       setActive(Boolean(target || interactive));
     };
+    const hide = () => {
+      inside = false;
+      setVisible(false);
+      setLabel('');
+      setActive(false);
+    };
+    const onOut = (e) => {
+      if (!e.relatedTarget) hide();
+    };
 
     window.addEventListener('pointermove', onMove, { passive: true });
-    return () => window.removeEventListener('pointermove', onMove);
+    window.addEventListener('pointerover', onOver, { passive: true });
+    window.addEventListener('pointerout', onOut, { passive: true });
+    window.addEventListener('blur', hide);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerover', onOver);
+      window.removeEventListener('pointerout', onOut);
+      window.removeEventListener('blur', hide);
+    };
   }, [fine, reduced, x, y]);
 
   if (!fine || reduced) return null;
 
   return (
-    <motion.div className="cursor" style={{ x: sx, y: sy }} aria-hidden="true">
+    <motion.div className="cursor" style={{ x: sx, y: sy, opacity: visible ? 1 : 0 }} aria-hidden="true">
       <motion.div
         className="cursor__ring"
         animate={{

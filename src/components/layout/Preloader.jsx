@@ -41,8 +41,8 @@ export default function Preloader({ onDone }) {
     >
       <div className="preloader__inner">
         <div className="preloader__mark">
-          <span className="preloader__sigla">PHD</span>
-          <span className="meta">Automóveis · Brasília</span>
+          <span className="preloader__sigla">POLLY</span>
+          <span className="meta">Veículos · The Drive Gallery</span>
         </div>
         <div className="preloader__count">{String(count).padStart(3, '0')}</div>
       </div>

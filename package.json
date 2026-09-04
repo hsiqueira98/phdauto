@@ -1,5 +1,5 @@
 {
-  "name": "phd-the-drive-gallery",
+  "name": "polly-veiculos-drive-gallery",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -28,5 +28,5 @@
     "vite": "^7.1.3",
     "vitest": "^3.2.4"
   },
-  "description": "Conceito visual navegável do redesign PHD // The Drive Gallery"
+  "description": "Conceito visual navegável POLLY VEÍCULOS // The Drive Gallery"
 }

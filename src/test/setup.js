@@ -37,4 +37,10 @@ if (!window.requestAnimationFrame) {
 }
 
 if (!Element.prototype.scrollTo) Element.prototype.scrollTo = () => {};
-if (!window.scrollTo) window.scrollTo = () => {};
+// jsdom expõe esta função, mas sua implementação apenas emite erro.
+window.scrollTo = () => {};
+
+if (!HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function () { this.open = true; };
+  HTMLDialogElement.prototype.close = function () { this.open = false; };
+}

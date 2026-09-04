@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { gsap } from '@/lib/gsap';
+import { gsap, ScrollTrigger } from '@/lib/gsap';
 
 /**
  * Barra de progresso de leitura, presa no topo.
@@ -15,34 +15,20 @@ export default function ScrollProgress() {
     const el = barra.current;
     if (!el) return undefined;
 
-    let pendente = false;
-
-    const atualizar = () => {
-      pendente = false;
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      const progresso = total > 0 ? window.scrollY / total : 0;
-      gsap.to(el, {
-        scaleX: gsap.utils.clamp(0, 1, progresso),
-        duration: 0.25,
-        ease: 'none',
-        overwrite: true,
-      });
-    };
-
-    const aoRolar = () => {
-      if (pendente) return;
-      pendente = true;
-      requestAnimationFrame(atualizar);
-    };
-
-    atualizar();
-    window.addEventListener('scroll', aoRolar, { passive: true });
-    window.addEventListener('resize', aoRolar);
+    const setProgress = gsap.quickSetter(el, 'scaleX');
+    const update = (trigger) => setProgress(trigger.progress);
+    // Reuse ScrollTrigger's existing scroll/update cycle. No extra rAF,
+    // document measurement or freshly allocated tween on every scroll event.
+    const trigger = ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: update,
+      onRefresh: update,
+    });
+    update(trigger);
 
     return () => {
-      window.removeEventListener('scroll', aoRolar);
-      window.removeEventListener('resize', aoRolar);
-      gsap.killTweensOf(el);
+      trigger.kill();
     };
   }, []);
 

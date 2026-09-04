@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /**
- * FOTOGRAFIA — PHD Photo Standard
+ * FOTOGRAFIA — POLLY Photo Standard
  *
  * Todo veículo aparece no mesmo recorte, com o mesmo tratamento.
  * O acervo emprestado do protótipo vem de fontes diferentes, com

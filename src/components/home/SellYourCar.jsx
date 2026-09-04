@@ -5,9 +5,9 @@ import { facets } from '@/data/taxonomy';
 import CardFlutuante from '@/components/animations/CardFlutuante';
 
 const STEPS = [
-  { n: '01', title: 'Você descreve', body: 'Marca, modelo, ano e quilometragem. Três campos, um minuto.' },
-  { n: '02', title: 'A gente avalia', body: 'Avaliação presencial no showroom do SIA ou por vídeo, se preferir.' },
-  { n: '03', title: 'Você decide', body: 'Compra direta, consignação ou troca com volta. Sem obrigação de fechar.' },
+  { n: '01', title: 'Você descreve', body: 'Marca, modelo, ano e quilometragem. O ponto de partida para a sua próxima escolha.' },
+  { n: '02', title: 'A gente avalia', body: 'Entenda os pontos importantes para avaliar o seu veículo.' },
+  { n: '03', title: 'Você decide', body: 'Compare as possibilidades de venda e troca, no seu tempo.' },
 ];
 
 /**
@@ -36,20 +36,14 @@ export default function SellYourCar() {
 
           <Reveal>
             <h2 className="sell__title t-h1">
-              Seu carro
-              <br />
-              também tem
-              <br />
-              uma próxima
-              <br />
-              história.
+              Seu carro também tem uma próxima história.
             </h2>
           </Reveal>
 
           <Reveal delay={0.1}>
             <p className="sell__lead">
-              Compramos, trocamos e recebemos em consignação. Trinta anos avaliando
-              seminovos em Brasília viraram um critério — e ele funciona nos dois sentidos.
+              Seu próximo movimento pode começar pelo carro que você já tem.
+              Explore as possibilidades de venda ou troca com a POLLY.
             </p>
           </Reveal>
 
@@ -100,7 +94,7 @@ export default function SellYourCar() {
             </div>
 
             <button type="submit" className="btn btn--paper btn--full">
-              {sent ? 'Recebido — entramos em contato' : 'Pedir avaliação'}
+              {sent ? 'Prévia da avaliação pronta' : 'Pedir avaliação'}
             </button>
 
             {sent && (
@@ -114,7 +108,7 @@ export default function SellYourCar() {
             )}
 
             <p className="sell__disclaimer meta">
-              Ou chame no WhatsApp e mande as fotos direto.
+              Demonstração visual. Nenhum pedido é enviado.
             </p>
           </form>
         </CardFlutuante>
