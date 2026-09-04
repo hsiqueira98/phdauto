@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '@/App';
 
@@ -8,12 +8,15 @@ import App from '@/App';
  * Não valida animação — valida que cada rota monta sem erro,
  * com a estrutura semântica esperada.
  */
-const renderAt = (route) =>
-  render(
+const renderAt = (route) => {
+  const view = render(
     <MemoryRouter initialEntries={[route]}>
       <App />
     </MemoryRouter>,
   );
+  fireEvent.click(screen.getByRole('button', { name: 'Entrar no site' }));
+  return view;
+};
 
 describe('rotas', () => {
   it('home monta com o headline do hero', () => {

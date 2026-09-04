@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { MotionConfig } from 'motion/react';
+import { AnimatePresence, MotionConfig } from 'motion/react';
 import { ScrollTrigger } from '@/lib/gsap';
 import SmoothScroll, { useLenis } from '@/components/layout/SmoothScroll';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ScrollProgress from '@/components/layout/ScrollProgress';
+import Preloader from '@/components/layout/Preloader';
 import DriveMode from '@/components/drivemode/DriveMode';
 import Home from '@/pages/Home';
 import Catalog from '@/pages/Catalog';
@@ -51,6 +52,21 @@ function Shell() {
     <Footer /><DriveMode open={driveMode} onClose={() => setDriveMode(false)} />
   </>;
 }
+function LoadingShell() {
+  const [loading, setLoading] = useState(true);
+  const finishLoading = useCallback(() => {
+    const restoreFocus = document.activeElement?.closest('.preloader');
+    setLoading(false);
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+      if (restoreFocus) document.querySelector('.header__logo')?.focus({ preventScroll: true });
+    });
+  }, []);
+  return <>
+    <div className="site-shell" inert={loading || undefined} aria-hidden={loading || undefined}><Shell /></div>
+    <AnimatePresence>{loading && <Preloader onDone={finishLoading} />}</AnimatePresence>
+  </>;
+}
 export default function App() {
-  return <MotionConfig reducedMotion="user"><SmoothScroll><Shell /></SmoothScroll></MotionConfig>;
+  return <MotionConfig reducedMotion="user"><SmoothScroll><LoadingShell /></SmoothScroll></MotionConfig>;
 }

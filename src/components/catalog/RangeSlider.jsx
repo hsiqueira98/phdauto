@@ -40,14 +40,14 @@ export default function RangeSlider({
         </span>
       </div>
 
-      <div className="range__track">
+      <div className="range__track range__track--dual">
         <span className="range__rail" />
         <span
           className="range__fill"
           style={{ left: `${startPct}%`, right: `${100 - endPct}%` }}
         />
 
-        <label className="sr-only" htmlFor={`${uid}-lo`}>
+        <label className="range__label" htmlFor={`${uid}-lo`}>
           {label} — mínimo
         </label>
         <input
@@ -58,10 +58,11 @@ export default function RangeSlider({
           max={max}
           step={step}
           value={lo}
+          aria-valuetext={String(format(lo))}
           onChange={(e) => setLow(e.target.value)}
         />
 
-        <label className="sr-only" htmlFor={`${uid}-hi`}>
+        <label className="range__label" htmlFor={`${uid}-hi`}>
           {label} — máximo
         </label>
         <input
@@ -72,6 +73,7 @@ export default function RangeSlider({
           max={max}
           step={step}
           value={hi}
+          aria-valuetext={String(format(hi))}
           onChange={(e) => setHigh(e.target.value)}
         />
       </div>
@@ -104,6 +106,7 @@ export function MaxSlider({ min, max, step = 1, value, onChange, format = (v) =>
           max={max}
           step={step}
           value={value}
+          aria-valuetext={String(format(value))}
           onChange={(e) => onChange(Number(e.target.value))}
         />
       </div>

@@ -208,13 +208,14 @@
   color: var(--paper-dim);
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce), (max-width: 1100px), (max-height: 600px), (pointer: coarse) {
   .specseq { height: auto; min-height: 0; padding: var(--section-y) var(--gutter); }
   .specseq__foto { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9; border-radius: var(--radius-lg); }
-  .specseq__etapas { position: relative; inset: auto; display: flex; flex-wrap: wrap; gap: var(--space-6); justify-content: center; margin-top: var(--space-6); }
+  .specseq__etapas { position: relative; inset: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--space-6); padding: 0; margin-top: var(--space-6); }
   .specseq__step { grid-area: auto; visibility: visible; opacity: 1; }
   .specseq__valor { font-size: var(--fs-h2); }
-  .specseq__progresso, .specseq__rotulo { position: relative; left: auto; right: auto; bottom: auto; margin-top: var(--space-5); }
+  .specseq__progresso { display: none; }
+  .specseq__rotulo { position: relative; left: auto; right: auto; bottom: auto; margin-top: var(--space-5); }
 }
 
 /* --------------------------------------------- Ficha técnica */

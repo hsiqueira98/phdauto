@@ -51,7 +51,7 @@ export default function DriveMode({ open, onClose }) {
   const travado = useRef(false);
   const unlockTimer = useRef(null);
   const reduced = useReducedMotion();
-  const touch = useMediaQuery('(pointer: coarse)');
+  const touch = useMediaQuery('(max-width: 1100px), (max-height: 600px), (pointer: coarse)');
 
   const lista = vehicles.filter((v) => v.status !== 'reservado');
   const veiculo = lista[indice];
@@ -143,7 +143,7 @@ export default function DriveMode({ open, onClose }) {
       type: 'wheel,touch,pointer',
       preventDefault: true,
       allowClicks: true,
-      ignore: raiz.current.querySelectorAll('button, a, input'),
+      ignore: raiz.current.querySelectorAll('button, a, input, .mi__info'),
       tolerance: 24,
       wheelSpeed: -1,
       onUp: () => mover(1),

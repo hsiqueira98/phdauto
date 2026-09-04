@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest';
+import { afterAll } from 'vitest';
 
 /**
  * Polyfills mínimos para o jsdom.
@@ -44,3 +45,11 @@ if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function () { this.open = true; };
   HTMLDialogElement.prototype.close = function () { this.open = false; };
 }
+
+// Encerra os relógios globais antes de o jsdom remover requestAnimationFrame.
+afterAll(async () => {
+  const { gsap, ScrollTrigger } = await import('@/lib/gsap');
+  ScrollTrigger.disable(true, true);
+  gsap.globalTimeline.clear();
+  gsap.ticker.sleep();
+});

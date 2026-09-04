@@ -663,7 +663,7 @@
   border-radius: 2px;
 }
 
-.range__input {
+input.range__input {
   position: absolute;
   left: 0;
   width: 100%;
@@ -675,9 +675,17 @@
   appearance: none;
 }
 
-.range__input::-webkit-slider-thumb { pointer-events: auto; }
-.range__input::-moz-range-thumb { pointer-events: auto; }
-.range__input::-moz-range-track { background: none; }
+input.range__input::-webkit-slider-thumb { pointer-events: auto; }
+input.range__input::-moz-range-thumb { pointer-events: auto; }
+input.range__input::-moz-range-track { background: none; }
+.range__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 /* ------------------------------------------------- Cartão */
 
@@ -818,8 +826,15 @@
 
 .vcard__acao {
   color: var(--accent-text);
-  transform: translateY(115%);
-  opacity: 0;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.vcard__universo { opacity: 0; transform: translateY(-115%); }
+
+@media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+  .vcard__universo { opacity: 1; transform: translateY(0); }
+  .vcard__acao { opacity: 0; transform: translateY(115%); }
 }
 
 .vcard__link:hover .vcard__universo,

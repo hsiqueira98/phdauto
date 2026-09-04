@@ -375,6 +375,11 @@ export default function Catalog() {
                   resultCount={results.length}
                 />
               </div>
+              {!isDesktop && <div className="catalog__aside-actions">
+                <button type="button" className="btn btn--accent" onClick={() => setDrawerOpen(false)}>
+                  Ver {results.length} {results.length === 1 ? 'veículo' : 'veículos'} <span aria-hidden="true">→</span>
+                </button>
+              </div>}
             </CatalogFilterDrawer>
           )}
         </AnimatePresence>

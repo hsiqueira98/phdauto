@@ -9,7 +9,7 @@ import { useMediaQuery, useReducedMotion } from '@/lib/hooks';
  * a mesa. A rotação é sutil de propósito: o card tem campos de
  * formulário dentro, e inclinação demais atrapalha mirar o clique.
  *
- * Só liga em ponteiro fino e com movimento permitido.
+ * Só liga em telas amplas, com ponteiro fino e movimento permitido.
  */
 export default function CardFlutuante({
   children,
@@ -19,7 +19,7 @@ export default function CardFlutuante({
 }) {
   const ref = useRef(null);
   const bounds = useRef(null);
-  const ponteiroFino = useMediaQuery('(hover: hover) and (pointer: fine)');
+  const ponteiroFino = useMediaQuery('(min-width: 1101px) and (min-height: 601px) and (hover: hover) and (pointer: fine)');
   const reduzido = useReducedMotion();
   const ativo = ponteiroFino && !reduzido;
 
@@ -76,7 +76,7 @@ export default function CardFlutuante({
     >
       <motion.div
         className="flutuante__card"
-        style={ativo ? { rotateX, rotateY, transformPerspective: 1100 } : undefined}
+        style={{ rotateX: ativo ? rotateX : 0, rotateY: ativo ? rotateY : 0, transformPerspective: ativo ? 1100 : 0 }}
         {...resto}
       >
         {/* Reflexo que acompanha o ponteiro — dá volume sem sombra extra */}

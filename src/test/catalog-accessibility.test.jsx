@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Catalog from '@/pages/Catalog';
 
@@ -41,7 +41,7 @@ describe('acessibilidade do catálogo', () => {
 
     const dialog = screen.getByRole('dialog', { name: 'Filtros da coleção' });
     const close = within(dialog).getByRole('button', { name: 'Fechar filtros' });
-    const last = within(dialog).getByRole('button', { name: 'Perfil' });
+    const last = within(dialog).getByRole('button', { name: 'Ver 24 veículos' });
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(close).toHaveFocus();
     expect(before).toHaveAttribute('inert');
@@ -69,6 +69,20 @@ describe('acessibilidade do catálogo', () => {
     unmount();
     expect(external).not.toHaveAttribute('inert');
     external.remove();
+  });
+
+  it('fecha pelo resultado atualizado sem perder a seleção nem bloquear a página', async () => {
+    renderCatalog();
+    const opener = screen.getByRole('button', { name: 'Filtros' });
+    fireEvent.click(opener);
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Performance' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Ver 3 veículos' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+    expect(document.body.style.overflow).not.toBe('hidden');
+    expect(screen.getByRole('button', { name: 'Performance', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await waitFor(() => expect(screen.getAllByRole('article')).toHaveLength(3));
   });
 
   it('mantém o painel desktop não modal e permite navegar fora dos filtros', () => {

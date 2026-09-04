@@ -93,7 +93,20 @@ sem desfoque ou sombra animada em cada cartão. O pin só é ativado a partir de
 Fora dessas condições, a coleção usa rolagem nativa com controles acessíveis.
 Botões magnéticos reutilizam animações, e as sequências de veículos limpam
 seus efeitos ao mudar de modelo. `prefers-reduced-motion` é observado também
-durante a sessão. A abertura não bloqueia o conteúdo com um carregador artificial.
+durante a sessão.
+
+A abertura exibe uma tela POLLY enquanto aguarda as fontes e a imagem principal.
+Ela aparece apenas na montagem inicial, não a cada mudança de rota: duração
+visual mínima de 500ms (sem mínimo com movimento reduzido), limite de 3s e
+botão "Entrar no site" para sair imediatamente. O indicador é indeterminado,
+sem porcentagens fictícias, e o conteúdo de fundo fica temporariamente inativo.
+
+Em telas compactas ou de toque, preço e ano usam dois controles separados para
+mínimo e máximo. O painel de filtros tem rolagem própria e botão fixo de
+resultados; os cards exibem "Ver máquina" sem depender de hover. Destaques da
+ficha não ficam pinados até 1100px, em telas de até 600px de altura ou no toque.
+O Drive Mode mantém botões grandes de avançar, voltar e sair, com conteúdo
+rolável quando necessário. Formulários não inclinam em janelas compactas.
 
 `NextChapter.jsx` substitui a antiga linha do tempo por três etapas da experiência:
 descobrir, conhecer e escolher. O logo de apresentação em `BrandMark.jsx` é

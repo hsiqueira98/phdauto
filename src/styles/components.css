@@ -271,45 +271,42 @@
   background: var(--ink-900);
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  min-height: 100%;
 }
 
 .preloader__inner {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: var(--gutter);
-  gap: var(--space-6);
-}
-
-.preloader__mark {
-  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: clamp(.75rem, 2.5vh, 1.5rem);
+  width: 100%;
+  padding: max(1.25rem, env(safe-area-inset-top)) 1.25rem 1rem;
+  text-align: center;
 }
 
-.preloader__sigla {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.06em;
-}
-
-.preloader__count {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 4.5vw, 3rem);
-  font-weight: 500;
-  line-height: 1;
-  color: var(--accent-text);
-  font-variant-numeric: tabular-nums;
-}
-
-.preloader__bar {
+.preloader .polly-brand { width: clamp(165px, 23vw, 260px); }
+.preloader .polly-brand__roof { height: 27px; }
+.preloader .polly-brand__name { font-size: clamp(46px, 6.5vw, 70px); }
+.preloader .polly-brand__caption { font-size: 9px; }
+.preloader__edition, .preloader__status { font-size: .625rem; letter-spacing: .15em; text-transform: uppercase; color: var(--fg-muted); }
+.preloader__headline { font: 500 clamp(1.4rem, 3vw, 2.5rem)/1.2 var(--font-display); letter-spacing: -.035em; }
+.preloader__headline span { color: var(--fg-muted); }
+.preloader__track { width: min(240px, 65vw); height: 2px; overflow: hidden; background: var(--line); }
+.preloader__track span {
+  display: block;
+  width: 45%;
   height: 2px;
   background: var(--accent);
-  transform-origin: left;
+  animation: loader-pass 1.1s ease-in-out infinite;
 }
+.preloader__skip { flex-shrink: 0; min-height: 44px; display: inline-flex; align-items: center; gap: 1.5rem; padding: .5rem 1rem; margin-bottom: max(1rem, env(safe-area-inset-bottom)); font-size: .8rem; color: var(--paper-dim); }
+@keyframes loader-pass { from { transform: translateX(-110%); } to { transform: translateX(230%); } }
+@media (prefers-reduced-motion: reduce) { .preloader__track span { animation: none; width: 100%; } }
 
 /* ------------------------------------------- Campos de form */
 

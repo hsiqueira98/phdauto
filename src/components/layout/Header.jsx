@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { universes } from '@/data/taxonomy';
 import BrandMark from '@/components/ui/BrandMark';
+import { useLockBodyScroll } from '@/lib/hooks';
 
 const NAV = [
   { to: '/colecao', pt: 'Coleção', en: 'Encontre seu carro' },
@@ -15,6 +16,7 @@ export default function Header({ onOpenDriveMode }) {
   const dialog = useRef(null);
   const menuButton = useRef(null);
   const location = useLocation();
+  useLockBodyScroll(menuOpen);
   useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
   useEffect(() => {
     let frame = 0;

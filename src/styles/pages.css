@@ -168,6 +168,7 @@
 .notfound {
   display: flex;
   align-items: center;
+  padding-inline: var(--gutter);
 }
 
 .notfound__shell {

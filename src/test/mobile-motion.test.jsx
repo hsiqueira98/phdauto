@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import DriveMode from '@/components/drivemode/DriveMode';
 import SpecSequence from '@/components/vehicle/SpecSequence';
+import CardFlutuante from '@/components/animations/CardFlutuante';
 import { vehicles } from '@/data/vehicles';
 import { ScrollTrigger } from '@/lib/gsap';
 
@@ -11,10 +12,16 @@ function device({ width = 1440, height = 900, coarse = false } = {}) {
   const queries = new Map();
   const matches = (query) => query.split(',').some((part) => {
     if (part.includes('prefers-reduced-motion')) return false;
-    if (part.includes('pointer: coarse')) return coarse;
+    if (part.includes('pointer: coarse') && !coarse) return false;
+    if (part.includes('pointer: fine') && coarse) return false;
     const maxWidth = part.match(/max-width:\s*(\d+)px/);
     const maxHeight = part.match(/max-height:\s*(\d+)px/);
-    return maxWidth ? width <= Number(maxWidth[1]) : maxHeight ? height <= Number(maxHeight[1]) : false;
+    const minWidth = part.match(/min-width:\s*(\d+)px/);
+    const minHeight = part.match(/min-height:\s*(\d+)px/);
+    return (!maxWidth || width <= Number(maxWidth[1]))
+      && (!maxHeight || height <= Number(maxHeight[1]))
+      && (!minWidth || width >= Number(minWidth[1]))
+      && (!minHeight || height >= Number(minHeight[1]));
   });
   vi.spyOn(window, 'matchMedia').mockImplementation((query) => {
     if (!queries.has(query)) {
@@ -45,6 +52,15 @@ afterEach(() => {
 });
 
 describe('mobile vehicle experiences', () => {
+  it('keeps form cards flat when a desktop window becomes compact', async () => {
+    const resize = device();
+    const view = render(<CardFlutuante><button>Preencher avaliação</button></CardFlutuante>);
+    expect(view.container.querySelector('.flutuante__reflexo')).toBeInTheDocument();
+    resize({ width: 390, height: 844 });
+    expect(view.container.querySelector('.flutuante__reflexo')).not.toBeInTheDocument();
+    await waitFor(() => expect(view.container.querySelector('.flutuante__card')).toHaveStyle({ transform: 'none' }));
+  });
+
   it.each([
     { width: 390, height: 844, coarse: false },
     { width: 1024, height: 768, coarse: true },
